@@ -1,0 +1,4 @@
+neurokit2
+pywavelet
+fastapi
+hypercorn[trio]
