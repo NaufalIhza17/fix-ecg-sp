@@ -21,10 +21,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-final appThemeData = ThemeData(
+final ThemeData appThemeData = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
   useMaterial3: true,
+  textTheme: GoogleFonts.poppinsTextTheme(),
 );
 
 final buttonDecoration = BoxDecoration(
@@ -34,7 +36,8 @@ final buttonDecoration = BoxDecoration(
 
 final videoPlayerFrameDecoration = BoxDecoration(
   color: const Color.fromRGBO(236, 240, 241, 1.0),
-  border: Border.all(color: const Color.fromRGBO(185, 195, 199, 1.0), width: 1.0),
+  border:
+      Border.all(color: const Color.fromRGBO(185, 195, 199, 1.0), width: 1.0),
 );
 
 final dropdownButtonDecoration = BoxDecoration(
@@ -47,11 +50,11 @@ final outputDecoration = BoxDecoration(
     color: const Color.fromRGBO(241, 196, 15, 1.0),
     border: Border.all(color: const Color.fromRGBO(243, 156, 18, 1.0)));
 
-const buttonTextStyle = TextStyle(
-    fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white);
+const buttonTextStyle =
+    TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white);
 
-const buttonSmallTextStyle = TextStyle(
-    fontSize: 10.0, fontWeight: FontWeight.bold, color: Colors.white);
+const buttonSmallTextStyle =
+    TextStyle(fontSize: 10.0, fontWeight: FontWeight.bold, color: Colors.white);
 
 final hintTextStyle = TextStyle(fontSize: 14, color: Colors.grey[400]);
 

@@ -1,16 +1,12 @@
 import 'package:ecg/page/my_home_page.dart';
+import 'package:ecg/page/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ecg/provider/decoration.dart';
 import 'package:http/http.dart' as http;
 import 'package:serious_python/serious_python.dart';
 
 void main() {
-  // startPython();
   runApp(const MyApp());
-}
-
-void startPython() async {
-  SeriousPython.run("app/app.zip", environmentVariables: {"a": "1", "b": "2"});
 }
 
 class MyApp extends StatelessWidget {
@@ -20,10 +16,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'ECG Analysis',
-        theme: appThemeData,
-        home: const MyHomePage(title: 'ECG Analysis'),
-      );
+      debugShowCheckedModeBanner: false,
+      title: 'ECG Analysis',
+      theme: appThemeData,
+      home: const LoginPage(),
+    );
   }
 }
-
