@@ -279,9 +279,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.centerLeft,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _showStartDateDialog = !_showStartDateDialog;
-                      });
+                      setState(
+                        () {
+                          _showStartDateDialog = !_showStartDateDialog;
+                        },
+                      );
                     },
                     child: Text(
                       '- Start Date: ${DateFormat("yyyy-MM-dd").format(_startDate)}',
@@ -296,12 +298,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     config: CalendarDatePicker2Config(),
                     value: [_startDate],
                     onValueChanged: (dates) {
-                      setState(() {
-                        debugPrint('start date has been set');
-                        _startDate = dates.first;
-                        readHealthData();
-                        _showStartDateDialog = false;
-                      });
+                      setState(
+                        () {
+                          debugPrint('start date has been set');
+                          _startDate = dates.first;
+                          readHealthData();
+                          _showStartDateDialog = false;
+                        },
+                      );
                     },
                   ),
                 ),
@@ -315,9 +319,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.centerLeft,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _showEndDateDialog = !_showEndDateDialog;
-                      });
+                      setState(
+                        () {
+                          _showEndDateDialog = !_showEndDateDialog;
+                        },
+                      );
                     },
                     child: Text(
                       '- End Date  : ${DateFormat("yyyy-MM-dd").format(_endDate)}',
@@ -354,241 +360,271 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 Visibility(
-                    visible: _healthData.isNotEmpty,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                '- Report: ',
-                                style: fieldTextStyle,
-                                textAlign: TextAlign.left,
-                              ),
-                              DropdownButtonFormField(
-                                  hint: const Text('Pick Report'),
-                                  decoration: const InputDecoration(
-                                    isDense: true,
-                                  ),
-                                  style: fieldTextStyle,
-                                  value: _selectedDataPoint,
-                                  items: _getDataPointList(),
-                                  onChanged: _changedSelectedDataPoint),
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                '- Classification: ',
-                                style: fieldTextStyle,
-                                textAlign: TextAlign.left,
-                              ),
-                              DropdownButtonFormField(
-                                  hint: const Text('Pick Model'),
-                                  decoration: const InputDecoration(
-                                    isDense: true,
-                                  ),
-                                  style: fieldTextStyle,
-                                  value: _selectedModel,
-                                  items: _getModelList(),
-                                  onChanged: _changedSelectedModel),
-                            ]),
-                        // Draw signal
-                        //const SizedBox(height: 5,),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width * 0.55,
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20, right: 20, top: 5),
-                              child: RealTimeGraph(
-                                updateDelay: const Duration(milliseconds: 4),
-                                stream: stream.map((value) => double.parse(
-                                    (value * 250).toStringAsFixed(0))),
-                                supportNegativeValuesDisplay: true,
-                                displayYAxisValues: false,
-                                displayYAxisLines: false,
-                                pointsSpacing: 1,
-                                graphStroke: 3,
-                                axisStroke: 1,
-                                //speed: 2,
-                                xAxisColor: Colors.white,
-                                graphColor: Colors.red,
-                              )),
+                  visible: _healthData.isNotEmpty,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Expanded(
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //         children: [
+                      //           Text(
+                      //             '- Report: ',
+                      //             style: fieldTextStyle,
+                      //             textAlign: TextAlign.left,
+                      //           ),
+                      //           Expanded(
+                      //             child: DropdownButtonFormField(
+                      //               hint: const Text('Pick Report'),
+                      //               decoration: const InputDecoration(
+                      //                 isDense: true,
+                      //               ),
+                      //               style: fieldTextStyle,
+                      //               value: _selectedDataPoint,
+                      //               items: _getDataPointList(),
+                      //               onChanged: _changedSelectedDataPoint,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //     children: [
+                      //       Text(
+                      //         '- Classification: ',
+                      //         style: fieldTextStyle,
+                      //         textAlign: TextAlign.left,
+                      //       ),
+                      //       Expanded(
+                      //         child: DropdownButtonFormField(
+                      //           hint: const Text('Pick Model'),
+                      //           decoration: const InputDecoration(
+                      //             isDense: true,
+                      //           ),
+                      //           style: fieldTextStyle,
+                      //           value: _selectedModel,
+                      //           items: _getModelList(),
+                      //           onChanged: _changedSelectedModel,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // DRAW SIGNAL
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width * 0.55,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 5,
+                          ),
+                          child: RealTimeGraph(
+                            updateDelay: const Duration(milliseconds: 4),
+                            stream: stream.map((value) =>
+                                double.parse((value * 250).toStringAsFixed(0))),
+                            supportNegativeValuesDisplay: true,
+                            displayYAxisValues: false,
+                            displayYAxisLines: false,
+                            pointsSpacing: 1,
+                            graphStroke: 3,
+                            axisStroke: 1,
+                            //speed: 2,
+                            xAxisColor: Colors.white,
+                            graphColor: Colors.red,
+                          ),
                         ),
-                        //const SizedBox(height: 5,),
-                        // Show result for gender classification
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.only(
-                                  left: 10, top: 0, right: 0.0, bottom: 0.0),
-                              child: Text(
-                                _status,
-                                style: focusTextStyle,
-                                textAlign: TextAlign.left,
-                              ),
+                      ),
+                      //const SizedBox(height: 5,),
+                      // Show result for gender classification
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              top: 0,
+                              right: 0.0,
+                              bottom: 0.0,
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.only(
-                                  left: 10, top: 0, right: 0.0, bottom: 0.0),
-                              child: Text(
-                                _getLabel(),
-                                // (${_averageOutput.toStringAsPrecision(2)})',
-                                style: const TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 19,
-                                    fontWeight: FontWeight.w500),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // User Form
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: TextFormField(
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                focusNode: nameFocusNode,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return nameValidator;
-                                  }
-                                  return null;
-                                },
-                                controller: nameController,
-                                decoration: const InputDecoration(
-                                    isDense: true,
-                                    //hintText: 'Enter Name',
-                                    labelText: 'Name'),
-                                autofocus: false,
-                                onFieldSubmitted: (value) {
-                                  validate();
-                                },
-                                textAlign: TextAlign.center,
-                                textInputAction: TextInputAction.next,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              flex: 1,
-                              child: TextFormField(
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                focusNode: ageFocusNode,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return ageValidator;
-                                  }
-                                  return null;
-                                },
-                                controller: ageController,
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  //hintText: 'Enter Age',
-                                  labelText: 'Age',
-                                  counterText: '',
-                                ),
-                                autofocus: false,
-                                onFieldSubmitted: (value) {
-                                  validate();
-                                },
-                                textAlign: TextAlign.center,
-                                textInputAction: TextInputAction.next,
-                                maxLength: 2,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        signed: true),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                              ),
-                            ),
-                            //const SizedBox(width: 10),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: DropdownButtonFormField(
-                                  hint: const Text('Select Label'),
-                                  decoration: const InputDecoration(
-                                    isDense: true,
-                                    border: UnderlineInputBorder(),
-                                    labelText: 'Label',
-                                  ),
-                                  alignment: Alignment.center,
-                                  value: LabelProvider.selectedLabel,
-                                  items: LabelProvider.getLabelDropdownList(),
-                                  onChanged: changedSelectedLabel),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              flex: 1,
-                              child: TextFormField(
-                                enabled: LabelProvider.selectedLabel! > 1,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                focusNode: pediatricsFocusNode,
-                                validator: (value) {
-                                  if (LabelProvider.selectedLabel! > 1 &&
-                                      (value == null || value.isEmpty)) {
-                                    return pediatricsValidator;
-                                  }
-                                  return null;
-                                },
-                                controller: pediatricsController,
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  //hintText: 'Enter Pediatrics (weeks)',
-                                  labelText: 'Pediatrics (weeks)',
-                                  counterText: '',
-                                ),
-                                autofocus: false,
-                                onFieldSubmitted: (value) {
-                                  validate();
-                                },
-                                textAlign: TextAlign.center,
-                                textInputAction: TextInputAction.next,
-                                //maxLength: 2,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        signed: true),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Center(
-                          child: FloatingActionButton.extended(
-                            onPressed: saveMetadata,
-                            tooltip: 'Save ECG Report to Database',
-                            icon: const Icon(Icons.cloud_upload, size: 40),
-                            label: const Text(
-                              'Save Metadata',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Text(
+                              _status,
+                              style: focusTextStyle,
+                              textAlign: TextAlign.left,
                             ),
                           ),
-                        )
-                      ],
-                    )),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 0, right: 0.0, bottom: 0.0),
+                            child: Text(
+                              _getLabel(),
+                              // (${_averageOutput.toStringAsPrecision(2)})',
+                              style: const TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // User Form
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              focusNode: nameFocusNode,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return nameValidator;
+                                }
+                                return null;
+                              },
+                              controller: nameController,
+                              decoration: const InputDecoration(
+                                  isDense: true,
+                                  //hintText: 'Enter Name',
+                                  labelText: 'Name'),
+                              autofocus: false,
+                              onFieldSubmitted: (value) {
+                                validate();
+                              },
+                              textAlign: TextAlign.center,
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              focusNode: ageFocusNode,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return ageValidator;
+                                }
+                                return null;
+                              },
+                              controller: ageController,
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                //hintText: 'Enter Age',
+                                labelText: 'Age',
+                                counterText: '',
+                              ),
+                              autofocus: false,
+                              onFieldSubmitted: (value) {
+                                validate();
+                              },
+                              textAlign: TextAlign.center,
+                              textInputAction: TextInputAction.next,
+                              maxLength: 2,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      signed: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                            ),
+                          ),
+                          //const SizedBox(width: 10),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: DropdownButtonFormField(
+                                hint: const Text('Select Label'),
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Label',
+                                ),
+                                alignment: Alignment.center,
+                                value: LabelProvider.selectedLabel,
+                                items: LabelProvider.getLabelDropdownList(),
+                                onChanged: changedSelectedLabel),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              enabled: LabelProvider.selectedLabel! > 1,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              focusNode: pediatricsFocusNode,
+                              validator: (value) {
+                                if (LabelProvider.selectedLabel! > 1 &&
+                                    (value == null || value.isEmpty)) {
+                                  return pediatricsValidator;
+                                }
+                                return null;
+                              },
+                              controller: pediatricsController,
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                //hintText: 'Enter Pediatrics (weeks)',
+                                labelText: 'Pediatrics (weeks)',
+                                counterText: '',
+                              ),
+                              autofocus: false,
+                              onFieldSubmitted: (value) {
+                                validate();
+                              },
+                              textAlign: TextAlign.center,
+                              textInputAction: TextInputAction.next,
+                              //maxLength: 2,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      signed: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: FloatingActionButton.extended(
+                          onPressed: saveMetadata,
+                          tooltip: 'Save ECG Report to Database',
+                          icon: const Icon(Icons.cloud_upload, size: 40),
+                          label: const Text(
+                            'Save Metadata',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -742,24 +778,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void readVoltages() {
     debugPrint('selected data point: $_selectedDataPoint');
     if (_selectedDataPoint == null) {
+      debugPrint('read voltages debug: return null');
       _voltages = [];
     } else {
-      debugPrint('read voltages: ${_selectedDataPoint!.value.toJson()}');
+      // debugPrint('read voltages: ${_selectedDataPoint!.value.toJson()}');
       var lst = _selectedDataPoint!.value.toJson()['voltage_values']
           as List<ElectrocardiogramVoltageValue>;
+      debugPrint("read voltages debug:  $lst");
       //debugPrint(jsonArray.toString());
       var times = Iterable<int>.generate(lst.length).toList();
       //if(_timer != null) _timer?.cancel();
       _voltages = lst.map((e) {
+        debugPrint('read voltages debug: return first');
         return 1000 * (e.voltage as double);
       }).toList();
       _data = times.map((t) {
+        debugPrint('read voltages debug: return second');
         return ECGData(time: t.toDouble(), voltage: _voltages[t]);
       }).toList();
       _tid = 0;
       debugPrint(
           'Number voltages: ${_data.length}. First: ${_data.first.voltage}');
-      //_startDrawECGLine();
+      // _startDrawECGLine();
       setState(() {
         _status = 'Prediction';
       });
@@ -927,26 +967,38 @@ class _MyHomePageState extends State<MyHomePage> {
       String startTime =
           Common.dateTimeToString(e.dateFrom, 'yy-MM-dd HH:mm:ss');
       return DropdownMenuItem(
-          value: e,
-          child: SizedBox(
-              child: Center(
-                  child: Text(
-            '$bpm $startTime',
-            style: const TextStyle(fontSize: 18),
-          ))));
+        value: e,
+        child: SizedBox(
+          height: 30,
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              '$bpm $startTime',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+        ),
+      );
     }).toList();
   }
 
   List<DropdownMenuItem<Model>> _getModelList() {
-    return _models.map((e) {
-      return DropdownMenuItem(
+    return _models.map(
+      (e) {
+        return DropdownMenuItem(
           value: e,
           child: SizedBox(
-              child: Center(
-                  child: Text(
-            e.task,
-          ))));
-    }).toList();
+            height: 30,
+            width: double.infinity,
+            child: Center(
+              child: Text(
+                e.task,
+              ),
+            ),
+          ),
+        );
+      },
+    ).toList();
   }
 
   // void readHealthData() async {
@@ -985,17 +1037,23 @@ class _MyHomePageState extends State<MyHomePage> {
         endTime: _endDate,
       );
 
-      if (data.isNotEmpty) {
-        debugPrint('Health data retrieved: $data');
-        debugPrint('ECG info: ${data.first.value.toString()}');
-      } else {
-        debugPrint('Health data is empty');
-      }
+      debugPrint('Value type: ${data.first.value.runtimeType}');
+      debugPrint('Value content: ${data.first.value}');
 
-      setState(() {
-        _healthData = data;
-        _selectedDataPoint = data.isNotEmpty ? data.first : null;
-      });
+      setState(
+        () {
+          _healthData = data;
+
+          if (data.isNotEmpty) {
+            debugPrint('ECG info: ${data.first.value.toString()}');
+            _changedSelectedDataPoint(data.first);
+            _selectedDataPoint = data.first;
+          } else {
+            _selectedDataPoint = null;
+            debugPrint('Health data is empty');
+          }
+        },
+      );
     } catch (error) {
       debugPrint('Exception in getHealthDataFromTypes: $error');
     }
