@@ -286,7 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     child: Text(
-                      '- Start Date: ${DateFormat("yyyy-MM-dd").format(_startDate)}',
+                      'Start Date: ${DateFormat("yyyy-MM-dd").format(_startDate)}',
                       style: fieldTextStyle,
                       textAlign: TextAlign.left,
                     ),
@@ -326,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     child: Text(
-                      '- End Date  : ${DateFormat("yyyy-MM-dd").format(_endDate)}',
+                      'End Date  : ${DateFormat("yyyy-MM-dd").format(_endDate)}',
                       style: fieldTextStyle,
                       textAlign: TextAlign.left,
                     ),
@@ -346,6 +346,85 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
+                PopupMenuButton<HealthDataPoint>(
+                  onSelected: (selectedDataPoint) {
+                    final uuidShort = selectedDataPoint.uuid.substring(0, 8);
+                    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDataPoint.dateFrom);
+                    debugPrint('Selected option: ($uuidShort) ($formattedDate)');
+                    _changedSelectedDataPoint(selectedDataPoint);
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return _getDataPointList()
+                        .map(
+                          (dataPoint) => PopupMenuItem<HealthDataPoint>(
+                        value: dataPoint.value,
+                        child: Text(
+                          dataPoint.value!.uuid.substring(0, 8).toString(),
+                          style: fieldTextStyle,
+                        ),
+                      ),
+                    )
+                        .toList();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _selectedDataPoint?.uuid.substring(0, 8).toString() ?? 'Pick Report',
+                          style: fieldTextStyle,
+                        ),
+                        const Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Container(
+                  padding: const EdgeInsets.only(left: 0),
+                  child: PopupMenuButton<Model>(
+                    onSelected: _changedSelectedModel,
+                    itemBuilder: (BuildContext context) {
+                      return _getModelList()
+                          .map(
+                            (model) => PopupMenuItem<Model>(
+                              value: model.value,
+                              child: Text(
+                                model.value!.task,
+                                style: fieldTextStyle,
+                              ),
+                            ),
+                          )
+                          .toList();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _selectedModel?.task ?? 'Pick Model',
+                            style: fieldTextStyle,
+                          ),
+                          const Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
                 Visibility(
                   visible: _healthData.isEmpty,
                   child: Container(
@@ -364,60 +443,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      // Expanded(
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: [
-                      //       Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //         children: [
-                      //           Text(
-                      //             '- Report: ',
-                      //             style: fieldTextStyle,
-                      //             textAlign: TextAlign.left,
-                      //           ),
-                      //           Expanded(
-                      //             child: DropdownButtonFormField(
-                      //               hint: const Text('Pick Report'),
-                      //               decoration: const InputDecoration(
-                      //                 isDense: true,
-                      //               ),
-                      //               style: fieldTextStyle,
-                      //               value: _selectedDataPoint,
-                      //               items: _getDataPointList(),
-                      //               onChanged: _changedSelectedDataPoint,
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   width: double.infinity,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //     children: [
-                      //       Text(
-                      //         '- Classification: ',
-                      //         style: fieldTextStyle,
-                      //         textAlign: TextAlign.left,
-                      //       ),
-                      //       Expanded(
-                      //         child: DropdownButtonFormField(
-                      //           hint: const Text('Pick Model'),
-                      //           decoration: const InputDecoration(
-                      //             isDense: true,
-                      //           ),
-                      //           style: fieldTextStyle,
-                      //           value: _selectedModel,
-                      //           items: _getModelList(),
-                      //           onChanged: _changedSelectedModel,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       // DRAW SIGNAL
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
@@ -444,7 +469,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
-                      //const SizedBox(height: 5,),
                       // Show result for gender classification
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -539,7 +563,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               maxLength: 2,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
-                                      signed: true),
+                                signed: true,
+                              ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
@@ -554,16 +579,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           Expanded(
                             flex: 1,
                             child: DropdownButtonFormField(
-                                hint: const Text('Select Label'),
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  border: UnderlineInputBorder(),
-                                  labelText: 'Label',
-                                ),
-                                alignment: Alignment.center,
-                                value: LabelProvider.selectedLabel,
-                                items: LabelProvider.getLabelDropdownList(),
-                                onChanged: changedSelectedLabel),
+                              hint: const Text('Select Label'),
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                border: UnderlineInputBorder(),
+                                labelText: 'Label',
+                              ),
+                              alignment: Alignment.center,
+                              value: LabelProvider.selectedLabel,
+                              items: LabelProvider.getLabelDropdownList(),
+                              onChanged: changedSelectedLabel,
+                            ),
                           ),
                           const SizedBox(
                             width: 15,
@@ -635,15 +661,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future saveMetadata() async {
     if (validate()) {
-      // Save metadata
       int id = await database.rawInsert(
           'INSERT OR REPLACE INTO $tableName(id, dataInfo, label, name, age, pediatrics) VALUES(${metadata.id}, \'${metadata.dataInfo}\', \'${metadata.label}\', \'${metadata.name}\', ${metadata.age}, ${metadata.pediatrics})');
       debugPrint('Inserted ECG: $id');
-
-      // await database.transaction((txn) async {
-      //   int id1 = await txn.rawInsert(
-      //       'INSERT INTO');
-      // });
     }
   }
 
@@ -668,9 +688,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }*/
     _averageTime = -1;
     _genderOutputs = List<ModelOutput>.filled(
-        _numberOfTries, const ModelOutput(value: -1, time: -1));
+      _numberOfTries,
+      const ModelOutput(value: -1, time: -1),
+    );
     _pregnancyOutputs = List<ModelOutput>.filled(
-        _numberOfTries, const ModelOutput(value: -1, time: -1));
+      _numberOfTries,
+      const ModelOutput(value: -1, time: -1),
+    );
   }
 
   String _getLabel() {
@@ -693,7 +717,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _averageTime = _averageTime ~/ genderCount;
       } else {
         _averageTime = -1;
-        return 'Failed (No prediction)';
+        return 'Failed (No prediction) by gender';
       }
     } else if (id == 1) {
       for (int i = 0; i < _pregnancyOutputs.length; ++i) {
@@ -706,7 +730,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _averageTime = _averageTime ~/ pregnancyCount;
       } else {
         _averageTime = -1;
-        return 'Failed (No prediction)';
+        return 'Failed (No prediction) by pregnancy';
       }
     }
 
@@ -781,28 +805,42 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint('read voltages debug: return null');
       _voltages = [];
     } else {
-      // debugPrint('read voltages: ${_selectedDataPoint!.value.toJson()}');
-      var lst = _selectedDataPoint!.value.toJson()['voltage_values']
-          as List<ElectrocardiogramVoltageValue>;
-      debugPrint("read voltages debug:  $lst");
-      //debugPrint(jsonArray.toString());
-      var times = Iterable<int>.generate(lst.length).toList();
-      //if(_timer != null) _timer?.cancel();
-      _voltages = lst.map((e) {
-        debugPrint('read voltages debug: return first');
-        return 1000 * (e.voltage as double);
-      }).toList();
-      _data = times.map((t) {
-        debugPrint('read voltages debug: return second');
-        return ECGData(time: t.toDouble(), voltage: _voltages[t]);
-      }).toList();
-      _tid = 0;
-      debugPrint(
-          'Number voltages: ${_data.length}. First: ${_data.first.voltage}');
-      // _startDrawECGLine();
-      setState(() {
-        _status = 'Prediction';
-      });
+      debugPrint('read voltages: ${_selectedDataPoint!.value.toJson()}');
+
+      final rawList = _selectedDataPoint!.value.toJson()['voltageValues'];
+      if (rawList is List) {
+        final lst = rawList.map((e) {
+          if (e is Map<String, dynamic>) {
+            return ElectrocardiogramVoltageValue.fromJson(e);
+          } else {
+            throw Exception("Invalid voltageValues format");
+          }
+        }).toList();
+
+        //debugPrint(jsonArray.toString());
+
+        var times = Iterable<int>.generate(lst.length).toList();
+
+        //if(_timer != null) _timer?.cancel();
+
+        _voltages = lst.map((e) {
+          debugPrint('read voltages debug: return first');
+          return 1000 * (e.voltage as double);
+        }).toList();
+
+        _data = times.map((t) {
+          debugPrint('read voltages debug: return second');
+          return ECGData(time: t.toDouble(), voltage: _voltages[t]);
+        }).toList();
+
+        _tid = 0;
+        debugPrint(
+            'Number voltages: ${_data.length}. First: ${_data.first.voltage}');
+        // _startDrawECGLine();
+        setState(() {
+          _status = 'Prediction';
+        });
+      }
     }
   }
 
@@ -812,8 +850,9 @@ class _MyHomePageState extends State<MyHomePage> {
       _status = 'Reading voltages';
       readVoltages();
       metadata.id = _selectedDataPoint!.dateFrom.millisecondsSinceEpoch;
-      metadata.dataInfo = _selectedDataPoint!
-          .toString(); //Common.listDoubleToString(_voltages, '_', 15);
+      metadata.dataInfo = _selectedDataPoint!.toString();
+      //Common.listDoubleToString(_voltages, '_', 15);
+
       // Get the user information from database
       database
           .rawQuery(
@@ -1000,31 +1039,6 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     ).toList();
   }
-
-  // void readHealthData() async {
-  //   debugPrint('start date: $_startDate');
-  //   debugPrint('end date: $_endDate');
-  //   try {
-  //     _health
-  //         .getHealthDataFromTypes(
-  //             types: _types, startTime: _startDate, endTime: _endDate)
-  //         .then((data) {
-  //       setState(() {
-  //         _healthData = data;
-  //         debugPrint('health data: $_healthData');
-  //         if (data.isNotEmpty) {
-  //           debugPrint('ECG info: ${data.first.value.toString()}');
-  //           _changedSelectedDataPoint(data.first);
-  //         } else {
-  //           _selectedDataPoint = null;
-  //           debugPrint('Health data is empty');
-  //         }
-  //       });
-  //     });
-  //   } catch (error) {
-  //     debugPrint('Exception in getHealthDataFromType: $error');
-  //   }
-  // }
 
   void readHealthData() async {
     debugPrint('Start date: $_startDate');
