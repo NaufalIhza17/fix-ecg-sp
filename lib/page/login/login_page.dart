@@ -1,3 +1,4 @@
+import 'package:ecg/page/new_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
@@ -137,6 +138,20 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginWithNumberPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                CustomTextButton(
+                  text: "New Home (WIP)",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NewHome(),
                       ),
                     );
                   },
