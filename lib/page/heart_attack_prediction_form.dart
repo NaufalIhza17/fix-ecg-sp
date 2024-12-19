@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 import '../components/logged_in_navbar.dart';
 
-class AccountSettings extends StatefulWidget {
-  const AccountSettings({
+class HeartAttackPredictionForm extends StatefulWidget {
+  const HeartAttackPredictionForm({
     super.key,
   });
 
   @override
-  State<AccountSettings> createState() => _AccountSettingsPageState();
+  State<HeartAttackPredictionForm> createState() =>
+      _HeartAttackPredictionFormPageState();
 }
 
-class _AccountSettingsPageState extends State<AccountSettings> {
+class _HeartAttackPredictionFormPageState
+    extends State<HeartAttackPredictionForm> {
   // COMMON COMPONENTS
   TextStyle headerTextStyle = const TextStyle(
     color: Colors.black,
@@ -76,7 +78,7 @@ class _AccountSettingsPageState extends State<AccountSettings> {
                   Column(
                     children: [
                       Text(
-                        'Account Settings',
+                        'Heart Attack Prediction',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 32,
@@ -84,7 +86,7 @@ class _AccountSettingsPageState extends State<AccountSettings> {
                         ),
                       ),
                       Text(
-                        'Change your account information here',
+                        'Please answer questions below before proceeding.',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -103,8 +105,6 @@ class _AccountSettingsPageState extends State<AccountSettings> {
     );
   }
 }
-
-
 
 class AccountInfoForm extends StatelessWidget {
   const AccountInfoForm({
@@ -131,21 +131,11 @@ class AccountInfoForm extends StatelessWidget {
         Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Email',
+                  'Sex',
                   style: inputLabelTextStyle,
-                ),
-                const IconButton(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                      size: 20.0,
-                      semanticLabel: 'Edit email',
-                    ),
-                    padding: EdgeInsets.zero,
                 ),
               ],
             ),
@@ -156,29 +146,17 @@ class AccountInfoForm extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               style: inputTextTextStyle,
-              initialValue:
-                  'user@gmail.com', // TODO: harusnya ambil dari database
             ),
           ],
         ),
         Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Phone number',
+                  'Age',
                   style: inputLabelTextStyle,
-                ),
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 20.0,
-                    semanticLabel: 'Change phone number',
-                  ),
-                  padding: EdgeInsets.zero,
                 ),
               ],
             ),
@@ -189,29 +167,44 @@ class AccountInfoForm extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               style: inputTextTextStyle,
-              initialValue:
-              '+886 9XXXXXXXX', // TODO: harusnya ambil dari database
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 24.0,
+                bottom: 12.0
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Do you smoke?',
+                    style: inputLabelTextStyle,
+                  ),
+                ],
+              ),
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Color(0x336C6C6C),
+                border: OutlineInputBorder(),
+              ),
+              style: inputTextTextStyle,
             ),
           ],
         ),
         Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Name',
+                  'Do you have any chest pain?',
                   style: inputLabelTextStyle,
-                ),
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 20.0,
-                    semanticLabel: 'Change name',
-                  ),
-                  padding: EdgeInsets.zero,
                 ),
               ],
             ),
@@ -222,48 +215,24 @@ class AccountInfoForm extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               style: inputTextTextStyle,
-              initialValue:
-              'Steve', // TODO: harusnya ambil dari database
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Password',
-                  style: inputLabelTextStyle,
-                ),
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 20.0,
-                    semanticLabel: 'Change password',
-                  ),
-                  padding: EdgeInsets.zero,
-                ),
-              ],
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color(0x336C6C6C),
-                border: OutlineInputBorder(),
-              ),
-              style: inputTextTextStyle,
-              initialValue:
-              'password', // TODO: harusnya ambil dari database
               obscureText: true,
               obscuringCharacter: '*',
             ),
           ],
         ),
+        Column(
+          children: [
+            Text(
+                '* Prediction from this app is NOT a medical diagnosis. Please seek a medical professional to get proper diagnosis and treatment.',
+              style: inputTextTextStyle,
+            ),
+            ElevatedButton(
+              onPressed: null,
+              child: Text('Check Prediction'),
+            )
+          ],
+        )
       ],
-
     );
   }
 }

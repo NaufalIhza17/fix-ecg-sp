@@ -120,7 +120,7 @@ class UploadClient {
     List<double> cwt = [];
 
     while(true){
-      var response = await http.get(blobConfig!.getUri('cwt'));
+      var response = await http.post(blobConfig!.getUri('cwt'));
 
       if (response.statusCode == 200) {
         //debugPrint(response.body);

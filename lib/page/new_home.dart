@@ -1,28 +1,9 @@
-import 'dart:async';
-
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:ecg/model/ecg_data.dart';
-import 'package:ecg/model/ecg_report.dart';
 import 'package:ecg/page/account_settings.dart';
+import 'package:ecg/page/heart_attack_prediction_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health/health.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:real_time_chart/real_time_chart.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:io' show Platform;
-import '../common.dart';
 import '../components/logged_in_navbar.dart';
-import '../components/text_button.dart';
-import '../model/model.dart';
-import '../model/model_output.dart';
-import '../provider/blob_config.dart';
-import '../provider/client.dart';
-import '../provider/decoration.dart';
-import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
-import 'package:sqflite/sqflite.dart';
-import '../provider/label_provider.dart';
 
 class NewHome extends StatefulWidget {
   const NewHome({
@@ -68,6 +49,19 @@ class _NewHomePageState extends State<NewHome> {
     color: Colors.red,
   );
 
+  TextStyle heroHeaderTextStyle = const TextStyle(
+    color: Colors.white,
+    fontSize: 24,
+    fontWeight: FontWeight.normal,
+    // height: 1.0,
+  );
+
+  TextStyle heroCaptionTextStyle = const TextStyle(
+    color: Colors.grey,
+    fontSize: 16,
+    // height: 1.0,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,94 +86,188 @@ class _NewHomePageState extends State<NewHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  LoggedInNavbar(),
+                  const LoggedInNavbar(),
                   Column(
                     children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const AccountSettings(),
-                                ),
-                            );
-                          },
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 5.0,
-                                horizontal: 10.0,
-                              ),
-                            child: Row(
-                              children: [
-                                Text('Settings'),
-                                Icon(Icons.settings),
-                              ],
-                            ),
-                          )
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello, user!',
+                            style: heroHeaderTextStyle,
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            'We’re excited to have you on board! Please choose a way to sign up or log in',
+                            style: heroCaptionTextStyle,
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const NewHome(),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 5.0,
-                              horizontal: 10.0,
-                            ),
-                            child: Row(
-                              children: [
-                                Text('Logout'),
-                                Icon(Icons.logout),
-                              ],
-                            ),
-                          )
+                      SizedBox(
+                        height: 32,
                       ),
-
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Text('Hello, user!'),
-                      const Text('Check your health parameters below'),
-                    ],
-                  ),
-                  Container(
-                    width: 200,
-                    height: 400,
-                    decoration: const BoxDecoration(color: Color(0xFF6C6C6C)),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            const Text('ECG STATUS'),
-                            Icon(
-                              Icons.info,
-                              color: Colors.white,
-                            )
-                          ],
+                      Container(
+                        width: double.infinity,
+                        height: 400,
+                        decoration: BoxDecoration(
+                          color: Color(0x336C6C6C),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        DropdownMenu(dropdownMenuEntries: [
-                          DropdownMenuEntry(value: 0, label: '1 week'),
-                          DropdownMenuEntry(value: 1, label: '1 month'),
-                          DropdownMenuEntry(value: 2, label: '3 month'),
-                          DropdownMenuEntry(value: 3, label: 'Custom range'),
-                        ]),
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: const BoxDecoration(color: Colors.white),
-                        )
-                        // Graph
-                        // Legend
-                      ],
-                    ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'ECG STATUS',
+                                    style: heroHeaderTextStyle,
+                                  ),
+                                  Icon(
+                                    Icons.info,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              DropdownMenu(dropdownMenuEntries: [
+                                DropdownMenuEntry(value: 0, label: '1 week'),
+                                DropdownMenuEntry(value: 1, label: '1 month'),
+                                DropdownMenuEntry(value: 2, label: '3 month'),
+                                DropdownMenuEntry(
+                                    value: 3, label: 'Custom range'),
+                              ]),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              Container(
+                                height: 100,
+                                width: 100,
+                                decoration:
+                                    const BoxDecoration(color: Colors.white),
+                              )
+                              // Graph
+                              // Legend
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-
+                  SizedBox(
+                    height: 36,
+                  ),
+                  Column(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Check Your Health',
+                            style: heroHeaderTextStyle,
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            'Use currently open ECG report to predict your health.',
+                            style: heroCaptionTextStyle,
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 32,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        height: 400,
+                        decoration: BoxDecoration(
+                          color: Color(0x336C6C6C),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const HeartAttackPredictionForm(),
+                                    ),
+                                  );
+                                },
+                                label: Text(
+                                  'Heart Attack',
+                                  style: heroHeaderTextStyle,
+                                ),
+                                icon: Icon(
+                                  Icons.heart_broken,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xFF000000),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Heart Attack',
+                                        style: heroHeaderTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xFF000000),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.pregnant_woman,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Text(
+                                        'Pregnancy',
+                                        style: heroHeaderTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              // Graph
+                              // Legend
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -189,5 +277,3 @@ class _NewHomePageState extends State<NewHome> {
     );
   }
 }
-
-
