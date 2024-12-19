@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import 'package:ecg/components/input.dart';
-import './login_with_email.dart';
-import './login_with_password.dart';
+import './login_with_otp.dart';
+import './login_with_number.dart';
+import '../my_home_page.dart';
 
-class LoginWithNumberPage extends StatefulWidget {
-  const LoginWithNumberPage({super.key});
+class LoginWithPasswordPage extends StatefulWidget {
+  const LoginWithPasswordPage({super.key});
 
   @override
-  _LoginWithNumberState createState() => _LoginWithNumberState();
+  _LoginWithPasswordState createState() => _LoginWithPasswordState();
 }
 
-class _LoginWithNumberState extends State<LoginWithNumberPage> {
+class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
   bool _isHovered = false;
 
   @override
@@ -123,7 +124,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Phone Number",
+            "Password",
             style: TextStyle(
               fontSize: 20,
               color: Colors.white,
@@ -145,7 +146,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
                   ),
                 ),
                 TextSpan(
-                  text: "phone number",
+                  text: "password",
                   style: TextStyle(
                     color: Color(0xFFC6FF99),
                     fontSize: 14,
@@ -160,15 +161,15 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
           ),
           CustomInput(
             controller: TextEditingController(),
-            type: 'phoneNumber',
-            hintText: "Insert your phone number",
+            type: 'email',
+            hintText: "Insert your password",
             errorMessage: "*wrong input",
             onChanged: (value) {},
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LoginWithPasswordPage(),
+                  builder: (context) => const MyHomePage(title: "Done"),
                 ),
               );
             },
@@ -196,7 +197,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
                 const Text(
                   "Other Option",
                   style:
-                      TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
+                  TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
                 ),
                 const SizedBox(
                   height: 8,
@@ -213,12 +214,12 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
                   height: 32,
                 ),
                 CustomTextButton(
-                  text: "Continue with email",
+                  text: "Continue with phone",
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginWithEmailPage(),
+                        builder: (context) => const LoginWithNumberPage(),
                       ),
                     );
                   },

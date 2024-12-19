@@ -824,12 +824,12 @@ class _MyHomePageState extends State<MyHomePage> {
         //if(_timer != null) _timer?.cancel();
 
         _voltages = lst.map((e) {
-          debugPrint('read voltages debug: return first');
+          debugPrint('read voltages debug: return first ${e.voltage as double}');
           return 1000 * (e.voltage as double);
         }).toList();
 
         _data = times.map((t) {
-          debugPrint('read voltages debug: return second');
+          debugPrint('read voltages debug: return second ${t.toDouble()}');
           return ECGData(time: t.toDouble(), voltage: _voltages[t]);
         }).toList();
 

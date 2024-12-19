@@ -38,8 +38,7 @@ class UploadClient {
     required this.metadata,
     this.blobConfig,
     Duration? timeout,
-  })
-      : timeout = timeout ?? const Duration(seconds: 30),
+  })  : timeout = timeout ?? const Duration(seconds: 30),
         _status = UploadStatus.initialized;
 
   uploadSignal({
@@ -58,12 +57,13 @@ class UploadClient {
     await _uploadSignal();
   }
 
-  getCWT(int segmentId, {
+  getCWT(
+    int segmentId, {
     CompleteCallback? onComplete,
     Function()? onTimeout,
   }) async {
     //if (_status == UploadStatus.started) {
-      //throw ResumableUploadException('Error: a file is uploading');
+    //throw ResumableUploadException('Error: a file is uploading');
     //}
     if (blobConfig == null) {
       throw ResumableUploadException('Blob config missing');
@@ -84,23 +84,23 @@ class UploadClient {
     List<int> data = List.empty(growable: true);
     var bytes = ByteData(4);
     bool printed = false;
-    for(var e in signal){
+    for (var e in signal) {
       bytes.setFloat32(0, e);
-      if(!printed) debugPrint(bytes.buffer.asUint8List().toString());
+      if (!printed) debugPrint(bytes.buffer.asUint8List().toString());
       printed = true;
       data.addAll(bytes.buffer.asUint8List());
     }
     // Put
     debugPrint('Upload URI: ${blobConfig!.getUri('cwt')}');
 
-    Future? uploadFuture = http.post(
-        blobConfig!.getUri('cwt'), body: data);
+    Future? uploadFuture = http.post(blobConfig!.getUri('cwt'), body: data);
     final response = await uploadFuture.timeout(timeout, onTimeout: () {
       _onTimeout?.call();
-      return http.Response(
-          '', HttpStatus.requestTimeout, reasonPhrase: 'Request timeout');
+      return http.Response('', HttpStatus.requestTimeout,
+          reasonPhrase: 'Request timeout');
     });
-    debugPrint('Upload signal response code: ${response.statusCode.toString()}');
+    debugPrint(
+        'Upload signal response code: ${response.statusCode.toString()}');
 
     if (response.statusCode != 200) {
       _status = UploadStatus.error;
@@ -113,20 +113,20 @@ class UploadClient {
 
   UploadStatus status() => _status;
 
-  Future _getCWT([int segmentId=0]) async {
+  Future _getCWT([int segmentId = 0]) async {
     // 2. Get CWT
     //debugPrint('2. GETTING CWT');
-    int repeat=10;
+    int repeat = 10;
     List<double> cwt = [];
 
-    while(true){
+    while (true) {
       var response = await http.get(blobConfig!.getUri('cwt'));
 
       if (response.statusCode == 200) {
         //debugPrint(response.body);
         List<dynamic> jsonArray = List.from(jsonDecode(response.body));
         var cwtString = jsonArray[0]['value'].toString();
-        debugPrint('Getting segment $segmentId try ${10-repeat+1}:');
+        debugPrint('Getting segment $segmentId try ${10 - repeat + 1}:');
         if (cwtString == 'error') {
           debugPrint('Not received cwt $segmentId');
           cwt = [];
@@ -137,16 +137,17 @@ class UploadClient {
           debugPrint('Length of cwtBytes ${cwtBytes.length}');
           ByteData byteData = cwtBytes.buffer.asByteData();
           cwt = [
-            for(var offset = 0; offset < cwtBytes.length; offset += 4)
+            for (var offset = 0; offset < cwtBytes.length; offset += 4)
               byteData.getFloat32(offset, Endian.little),
           ];
-          debugPrint('Length of decoded cwt: ${cwt.length}, example: ${cwt[0]}');
+          debugPrint(
+              'Length of decoded cwt: ${cwt.length}, example: ${cwt[0]}');
         }
         break;
       }
       repeat--;
 
-      if(repeat<1) {
+      if (repeat < 1) {
         _status = UploadStatus.error;
         _onTimeout?.call();
         return;
@@ -154,6 +155,6 @@ class UploadClient {
       await Future.delayed(const Duration(milliseconds: 150));
     }
     _status = UploadStatus.completed;
-    _onComplete?.call({segmentId:cwt});
+    _onComplete?.call({segmentId: cwt});
   }
 }

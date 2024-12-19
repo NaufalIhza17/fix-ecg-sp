@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import '../my_home_page.dart';
 import './login_with_number.dart';
+import './login_with_email.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -150,9 +151,8 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MyHomePage(
-                                title: 'From Login',
-                              )),
+                        builder: (context) => const LoginWithEmailPage(),
+                      ),
                     );
                   },
                 ),
