@@ -95,6 +95,7 @@ class UploadClient {
 
     Future? uploadFuture = http.post(
         blobConfig!.getUri('cwt'), body: data);
+    debugPrint('Sebelum http.request');
     final response = await uploadFuture.timeout(timeout, onTimeout: () {
       _onTimeout?.call();
       return http.Response(

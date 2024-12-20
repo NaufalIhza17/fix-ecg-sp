@@ -46,6 +46,7 @@ dependencies:
   serious_python: ^0.7.1
   flutter_svg: ^1.0.3
   google_fonts: ^6.2.1
+  provider: ^6.1.2
 
 dependency_overrides:
   win32: ^5.5.4

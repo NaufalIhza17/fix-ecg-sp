@@ -185,7 +185,6 @@ class _NewHomePageState extends State<NewHome> {
                       ),
                       Container(
                         width: double.infinity,
-                        height: 400,
                         decoration: BoxDecoration(
                           color: Color(0x336C6C6C),
                           borderRadius: BorderRadius.circular(20),
@@ -195,8 +194,52 @@ class _NewHomePageState extends State<NewHome> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              ElevatedButton.icon(
-                                onPressed: () {
+                              // Container(
+                              //   width: double.infinity,
+                              //   child: ElevatedButton.icon(
+                              //     style: ButtonStyle(
+                              //       shape: WidgetStateProperty.all<
+                              //           RoundedRectangleBorder>(
+                              //         RoundedRectangleBorder(
+                              //           borderRadius:
+                              //               BorderRadius.circular(18.0),
+                              //         ),
+                              //       ),
+                              //       backgroundColor:
+                              //           WidgetStateProperty.resolveWith<Color?>(
+                              //         (Set<WidgetState> states) {
+                              //           if (states
+                              //               .contains(WidgetState.pressed)) {
+                              //             return Theme.of(context)
+                              //                 .colorScheme
+                              //                 .primary
+                              //                 .withOpacity(0.5);
+                              //           }
+                              //           return Colors.black;
+                              //         },
+                              //       ),
+                              //     ),
+                              //     onPressed: () {
+                              //       Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //           builder: (context) =>
+                              //               const HeartAttackPredictionForm(),
+                              //         ),
+                              //       );
+                              //     },
+                              //     label: Text(
+                              //       'Heart Attack',
+                              //       style: heroHeaderTextStyle,
+                              //     ),
+                              //     icon: Icon(
+                              //       Icons.heart_broken,
+                              //       color: Colors.white,
+                              //     ),
+                              //   ),
+                              // ),
+                              GestureDetector(
+                                onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -205,30 +248,29 @@ class _NewHomePageState extends State<NewHome> {
                                     ),
                                   );
                                 },
-                                label: Text(
-                                  'Heart Attack',
-                                  style: heroHeaderTextStyle,
-                                ),
-                                icon: Icon(
-                                  Icons.heart_broken,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Color(0xFF000000),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0))),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Heart Attack',
-                                        style: heroHeaderTextStyle,
-                                      ),
-                                    ],
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFF000000),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8.0))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.heart_broken,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 20.0,
+                                        ),
+                                        Text(
+                                          'Heart Attack',
+                                          style: heroHeaderTextStyle,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

@@ -1,3 +1,4 @@
+import 'package:ecg/page/new_home.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import '../page/account_settings.dart';
@@ -33,15 +34,23 @@ class LoggedInNavbar extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: Colors.grey,
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.only(
+                child: Padding(
+                  padding: const EdgeInsets.only(
                     left: 5,
                     right: 5,
                     top: 5,
                   ),
                   child: IconButton(
-                    onPressed: null,
-                    icon: Icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                          const NewHome(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.white,
                       size: 48.0,
