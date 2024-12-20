@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import 'package:ecg/components/input.dart';
-import './login_with_otp.dart';
 import './login_with_number.dart';
 import '../my_home_page.dart';
+import '../health_authorization.dart';
 
 class LoginWithPasswordPage extends StatefulWidget {
   const LoginWithPasswordPage({super.key});
@@ -169,7 +169,7 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyHomePage(title: "Done"),
+                  builder: (context) => const HealthAuthorizationPage(),
                 ),
               );
             },

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+from typing import ClassVar
+>>>>>>> de90cb042df4d03911d5b8cbe77f69fe23382af0
 import numpy as np
 import neurokit2 as nk
 import pywt
@@ -5,7 +9,7 @@ from PIL import Image
 from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import trio
 from hypercorn.config import Config
 from hypercorn.trio import serve
@@ -31,7 +35,11 @@ class Item(BaseModel):
     values: list[list[float]] = []
 
 class ItemList(BaseModel):
+<<<<<<< HEAD
     items: list[Item] = []
+=======
+    items: ClassVar = list[Item]
+>>>>>>> de90cb042df4d03911d5b8cbe77f69fe23382af0
 
 @app.post("/cwt", response_model = ItemList)
 async def get_cwt_list(request: Request):

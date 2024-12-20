@@ -126,16 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _genderInterpreter = value;
       _genderInputTensor = _genderInterpreter.getInputTensors().first;
       _genderOutputTensor = _genderInterpreter.getOutputTensors().first;
-      // debugPrint(_genderInputTensor.toString());
-      // debugPrint(_genderOutputTensor.toString());
     });
     model = _models[1];
     tfl.Interpreter.fromAsset('assets/${model.fileName}.tflite').then((value) {
       _pregnancyInterpreter = value;
       _pregnancyInputTensor = _pregnancyInterpreter.getInputTensors().first;
       _pregnancyOutputTensor = _pregnancyInterpreter.getOutputTensors().first;
-      // debugPrint(_pregnancyInputTensor.toString());
-      // debugPrint(_pregnancyOutputTensor.toString());
     });
   }
 
@@ -789,12 +785,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Stream<double> nextDataStream() {
     return Stream.periodic(const Duration(milliseconds: 4), (_) {
-      //return Random().nextInt(10).toDouble();
       if (_data.isEmpty) return 0.0;
       if (_tid >= _data.length) {
         _tid = 0;
       }
-      //debugPrint(_data[_tid].voltage.toString());
       return _data[_tid++].voltage;
     }).asBroadcastStream();
   }

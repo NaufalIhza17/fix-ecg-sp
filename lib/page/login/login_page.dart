@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
-import '../my_home_page.dart';
 import './login_with_number.dart';
 import './login_with_email.dart';
 
