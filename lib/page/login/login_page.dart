@@ -1,9 +1,8 @@
-import 'package:ecg/page/new_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
-import '../my_home_page.dart';
 import './login_with_number.dart';
+import './login_with_email.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -143,20 +142,6 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(
-                  height: 32,
-                ),
-                CustomTextButton(
-                  text: "New Home (WIP)",
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NewHome(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(
                   height: 10,
                 ),
                 CustomTextButton(
@@ -165,9 +150,8 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MyHomePage(
-                                title: 'From Login',
-                              )),
+                        builder: (context) => const LoginWithEmailPage(),
+                      ),
                     );
                   },
                 ),

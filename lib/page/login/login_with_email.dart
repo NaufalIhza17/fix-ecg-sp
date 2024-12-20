@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import 'package:ecg/components/input.dart';
-import './login_with_email.dart';
+import './login_with_number.dart';
 import './login_with_password.dart';
 
-class LoginWithNumberPage extends StatefulWidget {
-  const LoginWithNumberPage({super.key});
+class LoginWithEmailPage extends StatefulWidget {
+  const LoginWithEmailPage({super.key});
 
   @override
-  _LoginWithNumberState createState() => _LoginWithNumberState();
+  _LoginWithEmailState createState() => _LoginWithEmailState();
 }
 
-class _LoginWithNumberState extends State<LoginWithNumberPage> {
+class _LoginWithEmailState extends State<LoginWithEmailPage> {
   bool _isHovered = false;
 
   @override
@@ -123,7 +123,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Phone Number",
+            "Email",
             style: TextStyle(
               fontSize: 20,
               color: Colors.white,
@@ -145,7 +145,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
                   ),
                 ),
                 TextSpan(
-                  text: "phone number",
+                  text: "email",
                   style: TextStyle(
                     color: Color(0xFFC6FF99),
                     fontSize: 14,
@@ -160,8 +160,8 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
           ),
           CustomInput(
             controller: TextEditingController(),
-            type: 'phoneNumber',
-            hintText: "Insert your phone number",
+            type: 'email',
+            hintText: "Insert your email",
             errorMessage: "*wrong input",
             onChanged: (value) {},
             onPressed: () {
@@ -213,12 +213,12 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
                   height: 32,
                 ),
                 CustomTextButton(
-                  text: "Continue with email",
+                  text: "Continue with phone",
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginWithEmailPage(),
+                        builder: (context) => const LoginWithNumberPage(),
                       ),
                     );
                   },

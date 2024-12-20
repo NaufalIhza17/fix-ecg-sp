@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import '../my_home_page.dart';
+import './login_with_email.dart';
+import './login_with_number.dart';
 
 class LoginWithOTPPage extends StatefulWidget {
-  const LoginWithOTPPage({super.key});
+  const LoginWithOTPPage({super.key, required this.fromEmail});
+
+  final bool fromEmail;
 
   @override
   _LoginWithOTPState createState() => _LoginWithOTPState();
@@ -123,7 +127,7 @@ class _LoginWithOTPState extends State<LoginWithOTPPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Phone Number",
+            "OTP",
             style: TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
           ),
           const SizedBox(
@@ -138,7 +142,7 @@ class _LoginWithOTPState extends State<LoginWithOTPPage> {
                       color: Color(0xFF939393), fontSize: 14, height: 1.0),
                 ),
                 TextSpan(
-                  text: "phone number",
+                  text: "OTP",
                   style: TextStyle(
                     color: Color(0xFFC6FF99),
                     fontSize: 14,
@@ -187,7 +191,7 @@ class _LoginWithOTPState extends State<LoginWithOTPPage> {
                 const Text(
                   "Other Option",
                   style:
-                  TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
+                      TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
                 ),
                 const SizedBox(
                   height: 8,
@@ -204,14 +208,14 @@ class _LoginWithOTPState extends State<LoginWithOTPPage> {
                   height: 32,
                 ),
                 CustomTextButton(
-                  text: "Continue with email",
+                  text: "Continue with ${!widget.fromEmail ? "email" : "number"}",
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MyHomePage(
-                          title: 'From Login',
-                        ),
+                        builder: (context) => !widget.fromEmail
+                            ? const LoginWithEmailPage()
+                            : const LoginWithNumberPage(),
                       ),
                     );
                   },

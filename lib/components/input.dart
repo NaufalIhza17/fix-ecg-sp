@@ -94,7 +94,7 @@ class _CustomInputState extends State<CustomInput> {
           ),
           child: const Center(
             child: Text(
-              'Send Code',
+              'Submit',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 14,
