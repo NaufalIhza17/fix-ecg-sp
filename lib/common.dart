@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class Common {
   static String dateFormat = 'yyMMddHHmmss';
   static String masterServerPort = 'http://140.118.155.65:9000/demo/fs';
-  static String localServerPort = 'http://127.0.0.1:55001';
+  static String localServerPort = 'http://127.0.0.1:8000';
   //static  String masterServerPort = 'http://192.168.0.15:9000/demo/fs';
   static Duration timerDuration = const Duration(seconds: 5);
 

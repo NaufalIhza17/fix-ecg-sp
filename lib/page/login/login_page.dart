@@ -1,3 +1,4 @@
+import 'package:ecg/page/my_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
@@ -151,6 +152,20 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginWithEmailPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                CustomTextButton(
+                  text: "Continue with email",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyHomePage(title: 'Home Page'),
                       ),
                     );
                   },

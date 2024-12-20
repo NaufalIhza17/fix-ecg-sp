@@ -38,7 +38,7 @@ class UploadClient {
     required this.metadata,
     this.blobConfig,
     Duration? timeout,
-  })  : timeout = timeout ?? const Duration(seconds: 30),
+  })  : timeout = timeout ?? const Duration(seconds: 60),
         _status = UploadStatus.initialized;
 
   uploadSignal({
@@ -82,18 +82,22 @@ class UploadClient {
 
     // Convert to bytes array
     List<int> data = List.empty(growable: true);
+
     var bytes = ByteData(4);
     bool printed = false;
     for (var e in signal) {
       bytes.setFloat32(0, e);
-      if (!printed) debugPrint(bytes.buffer.asUint8List().toString());
+      debugPrint(bytes.buffer.asUint8List().toString());
+      // debugPrint(bytes.toString());
       printed = true;
       data.addAll(bytes.buffer.asUint8List());
     }
+    debugPrint("Data length: ${data.length.toString()}");
     // Put
     debugPrint('Upload URI: ${blobConfig!.getUri('cwt')}');
 
     Future? uploadFuture = http.post(blobConfig!.getUri('cwt'), body: data);
+    debugPrint(data[0].toString());
     debugPrint('Sebelum http.request');
     final response = await uploadFuture.timeout(timeout, onTimeout: () {
       _onTimeout?.call();
@@ -107,6 +111,7 @@ class UploadClient {
       _status = UploadStatus.error;
       _onTimeout?.call();
     } else {
+      // debugPrint(response.statusCode);
       _status = UploadStatus.completed;
       _onComplete?.call({});
     }
