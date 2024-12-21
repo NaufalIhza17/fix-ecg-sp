@@ -7,9 +7,10 @@ import '../components/logged_in_navbar.dart';
 
 class HeartAttackPredictionForm extends StatefulWidget {
   const HeartAttackPredictionForm({
-    super.key,
+    super.key, required this.anomaly,
   });
 
+  final bool anomaly;
   @override
   State<HeartAttackPredictionForm> createState() =>
       _HeartAttackPredictionFormPageState();
@@ -133,6 +134,7 @@ const ChestPainLevel = [' No pain ', ' Mild Pain ', ' Severe Pain ', ' Worst Pai
 class HeartAttackInfoForm extends StatefulWidget {
   const HeartAttackInfoForm({
     super.key,
+
   });
 
   @override

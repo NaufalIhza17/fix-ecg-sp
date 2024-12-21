@@ -5,6 +5,7 @@ import 'package:ecg/model/ecg_report.dart';
 import 'package:ecg/provider/blob_config.dart';
 import 'package:ecg/provider/upload_status.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'exception.dart';
 
@@ -38,7 +39,7 @@ class UploadClient {
     required this.metadata,
     this.blobConfig,
     Duration? timeout,
-  })  : timeout = timeout ?? const Duration(seconds: 60),
+  })  : timeout = timeout ?? const Duration(seconds: 30),
         _status = UploadStatus.initialized;
 
   uploadSignal({
@@ -85,36 +86,51 @@ class UploadClient {
 
     var bytes = ByteData(4);
     bool printed = false;
+    int counter = 0;
+    // for (var i = 0; i < 1024; i++) {
+    //   debugPrint(signal[i].toString());
+    // }
+    final stopwatch = Stopwatch();
+    stopwatch.start();
     for (var e in signal) {
       bytes.setFloat32(0, e);
-      debugPrint(bytes.buffer.asUint8List().toString());
+      // debugPrint(bytes.buffer.asUint8List().toString());
       // debugPrint(bytes.toString());
+      counter++;
       printed = true;
       data.addAll(bytes.buffer.asUint8List());
     }
-    debugPrint("Data length: ${data.length.toString()}");
-    // Put
-    debugPrint('Upload URI: ${blobConfig!.getUri('cwt')}');
+    stopwatch.stop();
+    // debugPrint("Time to convert the data: ${stopwatch.elapsedMilliseconds.toString()}"); // 0
+    // debugPrint("Data length: ${data.length.toString()}");
+    // debugPrint('Upload URI: ${blobConfig!.getUri('upload-signal')}');
 
-    Future? uploadFuture = http.post(blobConfig!.getUri('cwt'), body: data);
-    debugPrint(data[0].toString());
-    debugPrint('Sebelum http.request');
-    final response = await uploadFuture.timeout(timeout, onTimeout: () {
-      _onTimeout?.call();
-      return http.Response('', HttpStatus.requestTimeout,
-          reasonPhrase: 'Request timeout');
-    });
-    debugPrint(
-        'Upload signal response code: ${response.statusCode.toString()}');
+    final chunkSize = 512;
+    for (int i = 0; i < data.length; i += chunkSize) {
+      final chunk = data.sublist(i, i + chunkSize > data.length ? data.length : i + chunkSize);
+      Future? uploadFuture = http.post(
+          blobConfig!.getUri('upload-signal'),
+          headers: {'Content-Type': 'application/octet-stream'},
+          body: chunk
+      );
+      final response = await uploadFuture.timeout(timeout, onTimeout: () {
+        _onTimeout?.call();
+        return http.Response('', HttpStatus.requestTimeout,
+            reasonPhrase: 'Request timeout');
+      });
+      debugPrint(
+          'Upload signal response code: ${response.statusCode.toString()}');
 
-    if (response.statusCode != 200) {
-      _status = UploadStatus.error;
-      _onTimeout?.call();
-    } else {
-      // debugPrint(response.statusCode);
-      _status = UploadStatus.completed;
-      _onComplete?.call({});
+      if (response.statusCode != 200) {
+        _status = UploadStatus.error;
+        _onTimeout?.call();
+      } else {
+        // debugPrint(response.statusCode)exl";
+        _status = UploadStatus.completed;
+        // _onComplete?.call({});
+      }
     }
+
   }
 
   UploadStatus status() => _status;
@@ -127,9 +143,9 @@ class UploadClient {
 
     while(true){
       var response = await http.post(blobConfig!.getUri('cwt'));
-
+      debugPrint('Get cwt response code: ${response.statusCode.toString()}');
       if (response.statusCode == 200) {
-        //debugPrint(response.body);
+        // debugPrint(response.body);
         List<dynamic> jsonArray = List.from(jsonDecode(response.body));
         var cwtString = jsonArray[0]['value'].toString();
         debugPrint('Getting segment $segmentId try ${10 - repeat + 1}:');
