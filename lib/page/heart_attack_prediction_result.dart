@@ -166,7 +166,7 @@ class _HeartAttackResultPosterState extends State<HeartAttackResultPoster> {
                       //TODO
                       heightFactor: MediaQuery.of(context).size.height * 0.03,
                       child: Text(
-                        'You have no tasks.',
+                        'Prediction failed.',
                         style: inputTextTextStyle,
                       ),
                     ),

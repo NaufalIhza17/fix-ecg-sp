@@ -73,10 +73,10 @@ class _HeartAttackPredictionFormPageState
             end: Alignment.bottomCenter,
           ),
         ),
-        child: const SingleChildScrollView(
+        child: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 left: 20,
                 right: 20,
                 top: 5,
@@ -84,10 +84,10 @@ class _HeartAttackPredictionFormPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  LoggedInNavbar(
+                  const LoggedInNavbar(
                     isNotHome: true,
                   ),
-                  Column(
+                  const Column(
                     children: [
                       Text(
                         'Heart Attack Prediction',
@@ -107,10 +107,10 @@ class _HeartAttackPredictionFormPageState
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 32.0,
                   ),
-                  HeartAttackInfoForm()
+                  HeartAttackInfoForm(anomaly: widget.anomaly)
                 ],
               ),
             ),
@@ -124,6 +124,7 @@ class _HeartAttackPredictionFormPageState
 enum Sex {
   male(0),
   female(1);
+
   final int value;
   const Sex(this.value);
 }
@@ -131,19 +132,27 @@ enum Sex {
 enum Smoking {
   no(0),
   yes(1);
+
   final int value;
   const Smoking(this.value);
 }
 
 // enum ChestPainLevel { no, mild, severe, worst }
 
-const ChestPainLevel = [' No pain ', ' Mild Pain ', ' Severe Pain ', ' Worst Pain '];
+const ChestPainLevel = [
+  ' No pain ',
+  ' Mild Pain ',
+  ' Severe Pain ',
+  ' Worst Pain '
+];
 
 class HeartAttackInfoForm extends StatefulWidget {
   const HeartAttackInfoForm({
     super.key,
-
+    required this.anomaly,
   });
+
+  final int anomaly;
 
   @override
   State<HeartAttackInfoForm> createState() => _HeartAttackInfoFormState();
@@ -156,7 +165,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
   // ChestPainLevel? _chestPainLevel = ChestPainLevel.no;
   double _chestPainLevel = 0;
   final bool _anomaly = true;
-  final _ageController = TextEditingController();
+  final _ageController = TextEditingController(text: '0');
   double _age = 0;
 
   @override
@@ -164,6 +173,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
     _ageController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     TextStyle inputLabelTextStyle = const TextStyle(
@@ -189,6 +199,41 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
+                    'Anomalous ECG',
+                    style: inputLabelTextStyle,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: Color(0x336C6C6C),
+                    borderRadius: BorderRadius.circular(8.0)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.anomaly == 1 ? 'Detected' : 'Not detected',
+                    style: inputTextTextStyle,
+                  ),
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '* this feature is automatically created from your ECG reading.',
+                style: inputTextTextStyle,
+              ),
+            ],
+          ),
+          SizedBox(height: 20.0),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
                     'Sex',
                     style: inputLabelTextStyle,
                   ),
@@ -199,9 +244,8 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Color(0x336C6C6C),
-                  borderRadius: BorderRadius.circular(8.0)
-                ),
+                    color: Color(0x336C6C6C),
+                    borderRadius: BorderRadius.circular(8.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -308,8 +352,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
               Container(
                 decoration: BoxDecoration(
                     color: Color(0x336C6C6C),
-                    borderRadius: BorderRadius.circular(8.0)
-                ),
+                    borderRadius: BorderRadius.circular(8.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -386,8 +429,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
               Container(
                 decoration: BoxDecoration(
                     color: Color(0x336C6C6C),
-                    borderRadius: BorderRadius.circular(8.0)
-                ),
+                    borderRadius: BorderRadius.circular(8.0)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -435,17 +477,18 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                     _age = double.parse(_ageController.text);
                     // http get with the datas
                     final heartAttackData = HeartAttackData(
-                        sex: _sex?.value == 0 ? false : true,
-                        age: _age.round(),
-                        chest_pain: _chestPainLevel.round(),
-                        smoking: _smoking?.value == 0 ? false : true,
-                        abnormality: true, // TODO
+                      sex: _sex?.value == 0 ? false : true,
+                      age: _age.round(),
+                      chest_pain: _chestPainLevel.round(),
+                      smoking: _smoking?.value == 0 ? false : true,
+                      anomaly: widget.anomaly == 1 ? true : false, // TODO
                     );
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                        HeartAttackPredictionResult(heartAttackData: heartAttackData,),
+                        builder: (context) => HeartAttackPredictionResult(
+                          heartAttackData: heartAttackData,
+                        ),
                       ),
                     );
                   }
@@ -454,7 +497,6 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
               ),
             ],
           ),
-
         ],
       ),
     );

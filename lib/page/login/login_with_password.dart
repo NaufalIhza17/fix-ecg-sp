@@ -176,7 +176,11 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
             errorMessage: "*wrong input",
             onChanged: (value) {},
             onPressed: () {
-              sendDataToApi(email: widget.email, password: _passwordController.text);
+              sendDataToApi(
+                  email: widget.email == '' ? null : widget.email,
+                  phoneNumber: widget.phoneNumber  == '' ? null : widget.phoneNumber,
+                  password: _passwordController.text
+              );
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -243,12 +247,14 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
     );
   }
 
-  void sendDataToApi({String? email, String? phoneNumber, required String password}) async {
+  void sendDataToApi(
+      {String? email, String? phoneNumber, required String password}) async {
     const String apiUrl = "http://127.0.0.1:8000/login";
 
     try {
       final Map<String, dynamic> body = {
         "email": email,
+        "phone_number": phoneNumber,
         "password": password,
       };
 
@@ -266,7 +272,8 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
           debugPrint("Error: ${responseData['error']}");
         }
       } else {
-        debugPrint("Error: ${response.statusCode} ${response.reasonPhrase}");
+        debugPrint(
+            "Error: ${response.statusCode} ${response.reasonPhrase} ${jsonDecode(response.body)['error']}");
       }
     } catch (e) {
       debugPrint("Exception occurred: $e");

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class HeartAttackProvider with ChangeNotifier {
   List<bool> _heartAttackDataPrediction  = [];
-  final url = 'http://192.168.106.166:8000/heart-attack-prediction';
+  final url = 'http://localhost:8000/heart-attack-prediction';
 
   List<bool> get heartAttackDataPrediction {
     return [..._heartAttackDataPrediction];
@@ -19,7 +19,7 @@ class HeartAttackProvider with ChangeNotifier {
         "age": data.age,
         "chest_pain": data.chest_pain,
         "smoking": data.smoking,
-        "abnormality": data.abnormality,
+        "anomaly": data.anomaly,
       };
       final headers = {'Content-Type': 'application/json'};
       final response = await http.post(
