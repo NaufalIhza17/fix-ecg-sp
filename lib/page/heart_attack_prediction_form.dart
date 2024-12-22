@@ -142,6 +142,7 @@ const ChestPainLevel = [' No pain ', ' Mild Pain ', ' Severe Pain ', ' Worst Pai
 class HeartAttackInfoForm extends StatefulWidget {
   const HeartAttackInfoForm({
     super.key,
+
   });
 
   @override

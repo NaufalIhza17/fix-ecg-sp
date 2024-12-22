@@ -123,13 +123,11 @@ class UploadClient {
   Future _getCWT([int segmentId = 0]) async {
     // 2. Get CWT
     //debugPrint('2. GETTING CWT');
-    int repeat = 1;
+    int repeat = 10;
     List<double> cwt = [];
 
     while (true) {
-      var response = await http.get(
-        blobConfig!.getUri('cwt'),
-      );
+      var response = await http.post(blobConfig!.getUri('cwt'));
 
       if (response.statusCode == 200) {
         //debugPrint(response.body);
