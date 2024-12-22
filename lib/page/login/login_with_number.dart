@@ -38,7 +38,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
 
   Widget _buildUI(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: double.infinity, 
       height: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(

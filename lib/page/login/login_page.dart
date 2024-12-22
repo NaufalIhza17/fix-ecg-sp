@@ -156,20 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomTextButton(
-                  text: "Continue with email",
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MyHomePage(title: 'Home Page'),
-                      ),
-                    );
-                  },
-                ),
               ],
             ),
           ),
