@@ -1,4 +1,3 @@
-import 'package:ecg/page/my_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
@@ -28,8 +27,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildUI(context),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: _buildUI(context),
+      ),
     );
   }
 
