@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health/health.dart';
 import 'package:real_time_chart/real_time_chart.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:io' show Platform;
 import '../components/logged_in_navbar.dart';
 import '../components/text_button.dart';
+import '../components/alert_dialog.dart';
 import '../model/ecg_data.dart';
+import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
+import './my_home_page.dart';
+import './pregnancy_gender_prediction_page.dart';
 
 class NewHome extends StatefulWidget {
   const NewHome({
@@ -68,12 +73,18 @@ class _NewHomePageState extends State<NewHome> {
   HealthDataPoint? _selectedDataPoint;
   List<ECGData> _data = [];
   int _tid = 0;
+  late int anomaly;
   String _status = '';
+  String _ecgDataTimeRange = '';
   List<double> _voltages = [];
+  List<double> _clippedVoltages = [];
   final Health _health = Health();
   final List<HealthDataType> _types = [HealthDataType.ELECTROCARDIOGRAM];
   late DateTime now;
   late DateTime start;
+  late Interpreter _anomalyInterpreter;
+  late Tensor _anomalyInputTensor;
+  late Tensor _anomalyOutputTensor;
 
   Stream<double> nextDataStream() {
     return Stream.periodic(const Duration(milliseconds: 4), (_) {
@@ -85,6 +96,26 @@ class _NewHomePageState extends State<NewHome> {
     }).asBroadcastStream();
   }
 
+  void loadAnomalyInterpreter() {
+    tfl.Interpreter.fromAsset('assets/anomaly.tflite').then((value) {
+      _anomalyInterpreter = value;
+      _anomalyInputTensor = _anomalyInterpreter.getInputTensors().first;
+      _anomalyOutputTensor = _anomalyInterpreter.getOutputTensors().first;
+      // debugPrint('Input Tensor Type: ${_anomalyInputTensor.type}');
+      // debugPrint('Input Tensor Shape: ${_anomalyInputTensor.shape}');
+      // debugPrint(
+      //     'Input Tensor Data (first 10 values): ${(_anomalyInputTensor.data as List).take(10).toList()}');
+    }).catchError((error) {
+      debugPrint('Error loading anomaly model: $error');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadAnomalyInterpreter();
+  }
+
   @override
   Widget build(BuildContext context) {
     final stream = nextDataStream();
@@ -93,48 +124,99 @@ class _NewHomePageState extends State<NewHome> {
     DateTime? endDate;
     int? selectedValue;
 
+    void clipVoltages() {
+      if (_voltages.length > 187) {
+        _clippedVoltages = _voltages.take(187).toList();
+      } else {
+        _clippedVoltages = _voltages;
+      }
+
+      while (_clippedVoltages.length < 187) {
+        _clippedVoltages.add(0.0);
+      }
+    }
+
+    Future<void> predictAnomaly() async {
+      clipVoltages();
+      if (_clippedVoltages.length != 187) {
+        debugPrint('Clipped Voltages does not contain exactly 187 values!');
+        return;
+      }
+
+      List<List<double>> formattedVoltages = [_clippedVoltages];
+
+      try {
+        List<List<double>> outputBuffer =
+            List.generate(1, (_) => List.filled(187, 0.0));
+
+        _anomalyInterpreter.run(formattedVoltages, outputBuffer);
+
+        final outputVector = outputBuffer[0];
+        debugPrint('Raw Output Vector: $outputVector');
+
+        anomaly = outputVector.first > 0 ? 1 : 0;
+        debugPrint("${outputVector.first}");
+        debugPrint('Predicted Anomaly: $anomaly');
+      } catch (e) {
+        debugPrint('Error during inference: $e');
+      }
+    }
+
     void readVoltages() {
       debugPrint('selected data point: $_selectedDataPoint');
+
       if (_selectedDataPoint == null) {
         debugPrint('read voltages debug: return null');
         _voltages = [];
       } else {
+        setState(() {
+          _status = "Waiting";
+        });
+
         debugPrint('read voltages: ${_selectedDataPoint!.value.toJson()}');
-
         final rawList = _selectedDataPoint!.value.toJson()['voltageValues'];
+
         if (rawList is List) {
-          final lst = rawList.map((e) {
-            if (e is Map<String, dynamic>) {
-              return ElectrocardiogramVoltageValue.fromJson(e);
-            } else {
-              throw Exception("Invalid voltageValues format");
-            }
-          }).toList();
+          try {
+            final lst = rawList.map((e) {
+              if (e is Map<String, dynamic>) {
+                return ElectrocardiogramVoltageValue.fromJson(e);
+              } else {
+                throw Exception("Invalid voltageValues format");
+              }
+            }).toList();
 
-          var times = Iterable<int>.generate(lst.length).toList();
+            var times = Iterable<int>.generate(lst.length).toList();
 
-          _voltages = lst.map((e) {
+            _voltages = lst.map((e) {
+              // debugPrint(
+              //     'read voltages debug: return first ${e.voltage as double}');
+              return 1000 * (e.voltage as double);
+            }).toList();
+
+            _data = times.map((t) {
+              // debugPrint('read voltages debug: return second ${t.toDouble()}');
+              return ECGData(time: t.toDouble(), voltage: _voltages[t]);
+            }).toList();
+
+            _tid = 0;
             debugPrint(
-                'read voltages debug: return first ${e.voltage as double}');
-            return 1000 * (e.voltage as double);
-          }).toList();
+                'Number voltages: ${_data.length}. First: ${_data.first.voltage}');
 
-          _data = times.map((t) {
-            debugPrint('read voltages debug: return second ${t.toDouble()}');
-            return ECGData(time: t.toDouble(), voltage: _voltages[t]);
-          }).toList();
-
-          _tid = 0;
-          debugPrint(
-              'Number voltages: ${_data.length}. First: ${_data.first.voltage}');
-          setState(() {
-            _status = 'Prediction';
-          });
+            setState(() {
+              _status = 'Prediction';
+            });
+          } catch (e) {
+            debugPrint("Error processing voltages: $e");
+            setState(() {
+              _status = 'Error';
+            });
+          }
         }
       }
     }
 
-    void _changedSelectedDataPoint(HealthDataPoint? selectedDataPoint) {
+    void changedSelectedDataPoint(HealthDataPoint? selectedDataPoint) {
       setState(() {
         _selectedDataPoint = selectedDataPoint;
         _status = 'Reading voltages';
@@ -158,7 +240,7 @@ class _NewHomePageState extends State<NewHome> {
             _healthData = data;
             if (data.isNotEmpty) {
               debugPrint('ECG info: ${data.first.value.toString()}');
-              _changedSelectedDataPoint(data.first);
+              changedSelectedDataPoint(data.first);
               _selectedDataPoint = data.first;
             } else {
               _selectedDataPoint = null;
@@ -177,15 +259,19 @@ class _NewHomePageState extends State<NewHome> {
       switch (value) {
         case 0:
           start = now.subtract(const Duration(days: 1));
+          _ecgDataTimeRange = "Today";
           break;
         case 1:
           start = now.subtract(const Duration(days: 7));
+          _ecgDataTimeRange = "1 Week";
           break;
         case 2:
           start = DateTime(now.year, now.month - 1, now.day);
+          _ecgDataTimeRange = "1 Month";
           break;
         case 3:
           start = DateTime(now.year, now.month - 3, now.day);
+          _ecgDataTimeRange = "3 Month";
           break;
         default:
           start = now;
@@ -324,7 +410,8 @@ class _NewHomePageState extends State<NewHome> {
                                       updateDelay:
                                           const Duration(milliseconds: 4),
                                       stream: stream.map((value) =>
-                                          double.parse((value * 250).toStringAsFixed(0))),
+                                          double.parse((value * 250)
+                                              .toStringAsFixed(0))),
                                       supportNegativeValuesDisplay: true,
                                       displayYAxisValues: false,
                                       displayYAxisLines: false,
@@ -382,20 +469,84 @@ class _NewHomePageState extends State<NewHome> {
                               children: <Widget>[
                                 CustomTextButton(
                                   text: 'Predict Pregnancy',
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    if (_voltages.isEmpty || _status == "") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            const CustomAlertDialog(
+                                          title: "Warning",
+                                          message:
+                                              "Choose a time range first before continuing with the prediction.",
+                                        ),
+                                      );
+                                    } else if (_status == "Waiting") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            const CustomAlertDialog(
+                                          title: "Warning",
+                                          message: "Wait for the ecg to load.",
+                                        ),
+                                      );
+                                    } else {
+                                      loadAnomalyInterpreter();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PregnancyGenderPredictionPage(
+                                            isNotHome: true,
+                                            ecgDataTimeRange: _ecgDataTimeRange,
+                                                selectedDataPoint: _selectedDataPoint!,
+                                                voltages: _voltages,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
-                                const SizedBox(height: 20,),
+                                const SizedBox(
+                                  height: 20,
+                                ),
                                 CustomTextButton(
                                   text: 'Predict Heart Attack',
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                        const HeartAttackPredictionForm(),
-                                      ),
-                                    );
+                                  onPressed: () async {
+                                    if (_voltages.isEmpty || _status == "") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            const CustomAlertDialog(
+                                          title: "Warning",
+                                          message:
+                                              "Choose a time range first before continuing with the prediction.",
+                                        ),
+                                      );
+                                    } else if (_status == "Waiting") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            const CustomAlertDialog(
+                                          title: "Warning",
+                                          message: "Wait for the ecg to load.",
+                                        ),
+                                      );
+                                    } else {
+                                      await predictAnomaly();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              HeartAttackPredictionForm(
+                                            anomaly: anomaly,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   },
+                                ),
+                                const SizedBox(
+                                  height: 20,
                                 ),
                               ],
                             ),

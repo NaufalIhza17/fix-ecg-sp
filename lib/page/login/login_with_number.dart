@@ -14,6 +14,7 @@ class LoginWithNumberPage extends StatefulWidget {
 
 class _LoginWithNumberState extends State<LoginWithNumberPage> {
   bool _isHovered = false;
+  final TextEditingController _phoneNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -159,7 +160,7 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
             height: 26,
           ),
           CustomInput(
-            controller: TextEditingController(),
+            controller: _phoneNumberController,
             type: 'phoneNumber',
             hintText: "Insert your phone number",
             errorMessage: "*wrong input",
@@ -168,7 +169,9 @@ class _LoginWithNumberState extends State<LoginWithNumberPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LoginWithPasswordPage(),
+                  builder: (context) => LoginWithPasswordPage(
+                    phoneNumber: _phoneNumberController.text,
+                  ),
                 ),
               );
             },

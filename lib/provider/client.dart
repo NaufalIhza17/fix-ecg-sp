@@ -15,7 +15,7 @@ class UploadClient {
   List<double> signal;
 
   // The signal metadata to upload
-  ECGReport metadata;
+  // ECGReport metadata;
 
   // Zenoh blob config
   BlobConfig? blobConfig;
@@ -35,7 +35,7 @@ class UploadClient {
 
   UploadClient({
     required this.signal,
-    required this.metadata,
+    // this.metadata,
     this.blobConfig,
     Duration? timeout,
   })  : timeout = timeout ?? const Duration(seconds: 30),
@@ -93,7 +93,13 @@ class UploadClient {
     // Put
     debugPrint('Upload URI: ${blobConfig!.getUri('cwt')}');
 
-    Future? uploadFuture = http.post(blobConfig!.getUri('cwt'), body: data);
+    Future? uploadFuture = http.post(
+      blobConfig!.getUri('cwt'),
+      body: data,
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+    );
     debugPrint('Sebelum http.request');
     final response = await uploadFuture.timeout(timeout, onTimeout: () {
       _onTimeout?.call();
@@ -117,11 +123,13 @@ class UploadClient {
   Future _getCWT([int segmentId = 0]) async {
     // 2. Get CWT
     //debugPrint('2. GETTING CWT');
-    int repeat = 10;
+    int repeat = 1;
     List<double> cwt = [];
 
-    while(true){
-      var response = await http.post(blobConfig!.getUri('cwt'));
+    while (true) {
+      var response = await http.get(
+        blobConfig!.getUri('cwt'),
+      );
 
       if (response.statusCode == 200) {
         //debugPrint(response.body);

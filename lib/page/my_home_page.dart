@@ -886,7 +886,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       client = UploadClient(
         signal: data,
-        metadata: metadata,
+        // metadata: metadata,
         blobConfig: BlobConfig(
           blobUrl: Common.localServerPort,
         ),
@@ -899,6 +899,7 @@ class _MyHomePageState extends State<MyHomePage> {
             for (int i = 0; i < _numberOfTries; ++i) {
               getCWT(i);
             }
+            _status = 'Get CWT';
           });
         },
         onTimeout: () {
@@ -909,7 +910,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } catch (e) {
       setState(() {
-        _status = 'Connection failed';
+        _status = 'Connection failed err';
       });
       return;
     }

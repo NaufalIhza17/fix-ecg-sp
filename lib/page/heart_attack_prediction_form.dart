@@ -8,7 +8,10 @@ import '../components/logged_in_navbar.dart';
 class HeartAttackPredictionForm extends StatefulWidget {
   const HeartAttackPredictionForm({
     super.key,
+    required this.anomaly,
   });
+
+  final int anomaly;
 
   @override
   State<HeartAttackPredictionForm> createState() =>
@@ -50,6 +53,12 @@ class _HeartAttackPredictionFormPageState
     fontWeight: FontWeight.w600,
     color: Colors.red,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("anomaly: ${widget.anomaly}");
+  }
 
   @override
   Widget build(BuildContext context) {

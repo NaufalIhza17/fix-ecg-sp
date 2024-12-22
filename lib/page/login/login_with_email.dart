@@ -14,6 +14,7 @@ class LoginWithEmailPage extends StatefulWidget {
 
 class _LoginWithEmailState extends State<LoginWithEmailPage> {
   bool _isHovered = false;
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
@@ -159,7 +160,7 @@ class _LoginWithEmailState extends State<LoginWithEmailPage> {
             height: 26,
           ),
           CustomInput(
-            controller: TextEditingController(),
+            controller: _emailController,
             type: 'email',
             hintText: "Insert your email",
             errorMessage: "*wrong input",
@@ -168,7 +169,9 @@ class _LoginWithEmailState extends State<LoginWithEmailPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LoginWithPasswordPage(),
+                  builder: (context) => LoginWithPasswordPage(
+                    email: _emailController.text,
+                  ),
                 ),
               );
             },

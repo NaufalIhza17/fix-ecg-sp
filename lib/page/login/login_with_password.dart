@@ -1,13 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import 'package:ecg/components/input.dart';
+import 'package:http/http.dart' as http;
 import './login_with_number.dart';
-import '../my_home_page.dart';
 import '../health_authorization.dart';
 
 class LoginWithPasswordPage extends StatefulWidget {
-  const LoginWithPasswordPage({super.key});
+  const LoginWithPasswordPage({
+    super.key,
+    this.email = '',
+    this.phoneNumber = '',
+  });
+
+  final String email;
+  final String phoneNumber;
 
   @override
   _LoginWithPasswordState createState() => _LoginWithPasswordState();
@@ -15,6 +24,7 @@ class LoginWithPasswordPage extends StatefulWidget {
 
 class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
   bool _isHovered = false;
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -160,12 +170,13 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
             height: 26,
           ),
           CustomInput(
-            controller: TextEditingController(),
+            controller: _passwordController,
             type: 'email',
             hintText: "Insert your password",
             errorMessage: "*wrong input",
             onChanged: (value) {},
             onPressed: () {
+              sendDataToApi(email: widget.email, password: _passwordController.text);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -197,7 +208,7 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
                 const Text(
                   "Other Option",
                   style:
-                  TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
+                      TextStyle(fontSize: 20, color: Colors.white, height: 1.0),
                 ),
                 const SizedBox(
                   height: 8,
@@ -230,5 +241,35 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
         ),
       ),
     );
+  }
+
+  void sendDataToApi({String? email, String? phoneNumber, required String password}) async {
+    const String apiUrl = "http://127.0.0.1:8000/login";
+
+    try {
+      final Map<String, dynamic> body = {
+        "email": email,
+        "password": password,
+      };
+
+      final http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['success'] == true) {
+          debugPrint("Login successful!");
+        } else {
+          debugPrint("Error: ${responseData['error']}");
+        }
+      } else {
+        debugPrint("Error: ${response.statusCode} ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      debugPrint("Exception occurred: $e");
+    }
   }
 }

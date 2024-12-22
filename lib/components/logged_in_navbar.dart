@@ -28,35 +28,31 @@ class LoggedInNavbar extends StatelessWidget {
           children: [
             Visibility(
               visible: isNotHome,
-              child: Container(
-                width: 72.0,
-                height: 72.0,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 5,
-                    right: 5,
-                    top: 5,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                          const NewHome(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 48.0,
-                      semanticLabel: 'Go back to home',
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NewHome(),
                     ),
+                  );
+                },
+                child: Container(
+                  width: 72.0,
+                  height: 72.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white, // Border color
+                      width: 2.0, // Border width
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(24.0),
+                  child: SvgPicture.asset(
+                    './assets/icons/back.svg',
+                    width: 18,
+                    height: 18,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -158,7 +154,7 @@ class ProfileMenuOverlay extends StatelessWidget {
                   ui.PlatformDispatcher.instance.implicitView!,
                 ).padding.top +
                 buttonSize +
-                20.0,
+                40.0,
             left: horizontalPadding,
             right: horizontalPadding,
           ),

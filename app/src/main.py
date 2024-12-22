@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-from typing import ClassVar
->>>>>>> de90cb042df4d03911d5b8cbe77f69fe23382af0
 import numpy as np
 import neurokit2 as nk
 import pywt
@@ -15,11 +11,11 @@ from hypercorn.config import Config
 from hypercorn.trio import serve
 
 sample_rate = 512
-before_rpeak = int(0.32*sample_rate)
-after_rpeak = int(0.48*sample_rate)
+before_rpeak = int(0.32 * sample_rate)
+after_rpeak = int(0.48 * sample_rate)
 output_size = (128, 128)
 n_scales = 128
-scales = np.arange(1, n_scales+1)
+scales = np.arange(1, n_scales + 1)
 waveletname = 'gaus1'
 n_choices = 9
 rpeak_offset = 2
@@ -31,17 +27,16 @@ config.bind = [f"0.0.0.0:{port}"]
 
 print("Trying to run FastAPIs on a Hypercorn server:", port)
 
+
 class Item(BaseModel):
     values: list[list[float]] = []
 
-class ItemList(BaseModel):
-<<<<<<< HEAD
-    items: list[Item] = []
-=======
-    items: ClassVar = list[Item]
->>>>>>> de90cb042df4d03911d5b8cbe77f69fe23382af0
 
-@app.post("/cwt", response_model = ItemList)
+class ItemList(BaseModel):
+    items: list[Item] = []
+
+
+@app.post("/cwt", response_model=ItemList)
 async def get_cwt_list(request: Request):
     async for chunk in request.stream():
         dtype = np.dtype(np.float32).newbyteorder('>')
@@ -54,8 +49,9 @@ async def get_cwt_list(request: Request):
         n_rpeaks = len(rpeaks)
         item_list = ItemList()
 
-        for i in range(min(n_rpeaks-2, n_choices)):
-            segment = data[rpeaks[i+rpeak_offset]-before_rpeak:rpeaks[i+rpeak_offset]+after_rpeak+1]
+        for i in range(min(n_rpeaks - 2, n_choices)):
+            segment = data[rpeaks[i + rpeak_offset] - before_rpeak:rpeaks[
+                                                                       i + rpeak_offset] + after_rpeak + 1]
             segment, _ = pywt.cwt(segment, scales, waveletname)
             segment = Image.fromarray(segment.astype(np.float32))
             item = Item()
@@ -64,5 +60,6 @@ async def get_cwt_list(request: Request):
         break
     print(item_list)
     return item_list
+
 
 trio.run(serve, app, config)
