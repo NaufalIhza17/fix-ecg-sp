@@ -122,8 +122,8 @@ class _HeartAttackPredictionFormPageState
 }
 
 enum Sex {
-  male(0),
-  female(1);
+  male(1),
+  female(0);
 
   final int value;
   const Sex(this.value);
@@ -160,8 +160,8 @@ class HeartAttackInfoForm extends StatefulWidget {
 
 class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
   final _formKey = GlobalKey<FormState>();
-  Sex? _sex = Sex.male;
-  Smoking? _smoking = Smoking.no;
+  Sex _sex = Sex.male;
+  Smoking _smoking = Smoking.no;
   // ChestPainLevel? _chestPainLevel = ChestPainLevel.no;
   double _chestPainLevel = 0;
   final bool _anomaly = true;
@@ -257,7 +257,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                             groupValue: _sex,
                             onChanged: (Sex? value) {
                               setState(() {
-                                _sex = value;
+                                _sex = value!;
                               });
                             },
                           ),
@@ -281,7 +281,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                             groupValue: _sex,
                             onChanged: (Sex? value) {
                               setState(() {
-                                _sex = value;
+                                _sex = value!;
                               });
                             },
                           ),
@@ -364,7 +364,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                             groupValue: _smoking,
                             onChanged: (Smoking? value) {
                               setState(() {
-                                _smoking = value;
+                                _smoking = value!;
                               });
                             },
                           ),
@@ -388,7 +388,7 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                             groupValue: _smoking,
                             onChanged: (Smoking? value) {
                               setState(() {
-                                _smoking = value;
+                                _smoking = value!;
                               });
                             },
                           ),
@@ -477,11 +477,11 @@ class _HeartAttackInfoFormState extends State<HeartAttackInfoForm> {
                     _age = double.parse(_ageController.text);
                     // http get with the datas
                     final heartAttackData = HeartAttackData(
-                      sex: _sex?.value == 0 ? false : true,
+                      sex: _sex.value,
                       age: _age.round(),
                       chest_pain: _chestPainLevel.round(),
-                      smoking: _smoking?.value == 0 ? false : true,
-                      anomaly: widget.anomaly == 1 ? true : false, // TODO
+                      smoking: _smoking.value,
+                      anomaly: widget.anomaly
                     );
                     Navigator.push(
                       context,
