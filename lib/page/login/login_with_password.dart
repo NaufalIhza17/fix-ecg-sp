@@ -5,8 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:ecg/components/text_button.dart';
 import 'package:ecg/components/input.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../../provider/auth_provider.dart';
 import './login_with_number.dart';
 import '../health_authorization.dart';
+import '../../components/alert_dialog.dart';
 
 class LoginWithPasswordPage extends StatefulWidget {
   const LoginWithPasswordPage({
@@ -171,22 +174,34 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
           ),
           CustomInput(
             controller: _passwordController,
-            type: 'email',
+            type: 'password',
             hintText: "Insert your password",
             errorMessage: "*wrong input",
             onChanged: (value) {},
-            onPressed: () {
-              sendDataToApi(
+            onPressed: () async {
+              if (await sendDataToApi(
                   email: widget.email == '' ? null : widget.email,
-                  phoneNumber: widget.phoneNumber  == '' ? null : widget.phoneNumber,
-                  password: _passwordController.text
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HealthAuthorizationPage(),
-                ),
-              );
+                  phoneNumber:
+                      widget.phoneNumber == '' ? null : widget.phoneNumber,
+                  password: _passwordController.text)) {
+                context.read<AuthProvider>().login();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HealthAuthorizationPage(),
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const CustomAlertDialog(
+                      title: "Failed to Login",
+                      message: "Try again.",
+                    );
+                  },
+                );
+              }
             },
           ),
         ],
@@ -247,7 +262,7 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
     );
   }
 
-  void sendDataToApi(
+  Future<bool> sendDataToApi(
       {String? email, String? phoneNumber, required String password}) async {
     const String apiUrl = "http://127.0.0.1:8000/login";
 
@@ -264,19 +279,24 @@ class _LoginWithPasswordState extends State<LoginWithPasswordPage> {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        if (responseData['success'] == true) {
+        debugPrint("Response data: $responseData");
+        if (responseData['status'] == "success") {
           debugPrint("Login successful!");
+          return true;
         } else {
           debugPrint("Error: ${responseData['error']}");
+          return false;
         }
       } else {
         debugPrint(
             "Error: ${response.statusCode} ${response.reasonPhrase} ${jsonDecode(response.body)['error']}");
+        return false;
       }
     } catch (e) {
       debugPrint("Exception occurred: $e");
+      return false;
     }
   }
 }

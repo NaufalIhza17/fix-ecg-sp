@@ -32,7 +32,7 @@ class _CustomInputState extends State<CustomInput> {
       } else if (widget.type == 'email') {
         _isInputCorrect = value.contains('@') && value.length >= 5;
       } else {
-        _isInputCorrect = value.isNotEmpty && value.length >= 5;
+        _isInputCorrect = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>-_=+]).{6,}$').hasMatch(value);
       }
     });
     widget.onChanged(value);

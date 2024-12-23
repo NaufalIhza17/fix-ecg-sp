@@ -16,7 +16,6 @@ class _HealthAuthorizationState extends State<HealthAuthorizationPage> {
   final List<HealthDataType> _types = [HealthDataType.ELECTROCARDIOGRAM];
   bool _isAuthorized = false;
   bool _isRequesting = false;
-  bool _isHovered = false;
 
   @override
   void initState() {
@@ -75,8 +74,11 @@ class _HealthAuthorizationState extends State<HealthAuthorizationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildUI(context),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: _buildUI(context),
+      ),
     );
   }
 
@@ -105,7 +107,6 @@ class _HealthAuthorizationState extends State<HealthAuthorizationPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _returnButton(context),
                   const SizedBox(
                     height: 60,
                   ),
@@ -120,45 +121,6 @@ class _HealthAuthorizationState extends State<HealthAuthorizationPage> {
     );
   }
 
-  Widget _returnButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: MouseRegion(
-              onEnter: (_) {
-                setState(() {
-                  _isHovered = true;
-                });
-              },
-              onExit: (_) {
-                setState(() {
-                  _isHovered = false;
-                });
-              },
-              child: Text(
-                "Back",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: _isHovered ? Colors.white : const Color(0xFF939393),
-                  height: 1.0,
-                  decoration: _isHovered
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _content(BuildContext context) {
     return Padding(

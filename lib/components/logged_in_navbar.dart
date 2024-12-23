@@ -1,8 +1,12 @@
 import 'package:ecg/page/new_home.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 import '../page/account_settings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../page/login/login_page.dart';
+import '../provider/auth_provider.dart';
 
 const double buttonSize = 72.0;
 const double horizontalPadding = 20.0;
@@ -244,7 +248,15 @@ class ProfileMenuOverlay extends StatelessWidget {
                       },
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AuthProvider>().logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: 20.0,

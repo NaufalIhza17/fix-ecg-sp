@@ -251,6 +251,15 @@ class _NewHomePageState extends State<NewHome> {
       } catch (error) {
         _voltages = [];
         debugPrint('Exception in getHealthDataFromTypes: $error');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const CustomAlertDialog(
+              title: "Warning",
+              message: "There is no data found in that range of time.",
+            );
+          },
+        );
       }
     }
 
