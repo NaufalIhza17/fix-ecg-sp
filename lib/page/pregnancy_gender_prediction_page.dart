@@ -1,3 +1,4 @@
+import 'package:ecg/common.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -79,14 +80,15 @@ class _PregnancyGenderPredictionPagePageState
           threshold: 0.5,
           labels: genderLabels),
       Model(
-          id: 1,
-          fileName: 'resnet18_pregnant1',
-          name: 'Resnet18',
-          task: 'Pregnancy',
-          mean: -0.0251138,
-          std: 0.7312898,
-          threshold: 0.80,
-          labels: pregnancyLabels),
+        id: 1,
+        fileName: 'resnet18_pregnant1',
+        name: 'Resnet18',
+        task: 'Pregnancy',
+        mean: -0.0251138,
+        std: 0.7312898,
+        threshold: 0.80,
+        labels: pregnancyLabels,
+      ),
       const Model(
         id: 2,
         fileName: 'resnet18',
@@ -324,7 +326,7 @@ class _PregnancyGenderPredictionPagePageState
       client = UploadClient(
         signal: data,
         blobConfig: BlobConfig(
-          blobUrl: "http://192.168.0.101:8000",
+          blobUrl: Common.localServerPort,
         ),
       );
 
@@ -358,6 +360,7 @@ class _PregnancyGenderPredictionPagePageState
       client!.getCWT(
         segmentId,
         onComplete: (value) {
+          debugPrint("Berhasil get cwt");
           if (value.isNotEmpty) {
             var key = value.keys.first;
             var genderOutput = [
@@ -371,6 +374,7 @@ class _PregnancyGenderPredictionPagePageState
             timer.start();
             if (id == 0) {
               var cwt = normalizeInput(value[key]!, _models[0]);
+              debugPrint(_genderInputTensor.shape.toString());
               var input = cwt.reshape(_genderInputTensor.shape);
               _genderInterpreter.run(input, genderOutput);
             } else if (id == 1) {

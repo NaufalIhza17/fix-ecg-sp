@@ -101,21 +101,50 @@ class UploadClient {
       },
     );
     debugPrint('Sebelum http.request');
-    final response = await uploadFuture.timeout(timeout, onTimeout: () {
-      _onTimeout?.call();
-      return http.Response('', HttpStatus.requestTimeout,
-          reasonPhrase: 'Request timeout');
-    });
-    debugPrint(
-        'Upload signal response code: ${response.statusCode.toString()}');
+    // final response = await uploadFuture.timeout(timeout, onTimeout: () {
+    //   _onTimeout?.call();
+    //   return http.Response('', HttpStatus.requestTimeout,
+    //       reasonPhrase: 'Request timeout');
+    // });
+    final chunkSize = 512;
+    for (int i = 0; i < data.length; i += chunkSize) {
+      final chunk = data.sublist(i, i + chunkSize > data.length ? data.length : i + chunkSize);
+      Future? uploadFuture = http.post(
+          blobConfig!.getUri('upload-signal'),
+          headers: {'Content-Type': 'application/octet-stream'},
+          body: chunk
+      );
+      final response = await uploadFuture.timeout(timeout, onTimeout: () {
+        _onTimeout?.call();
+        return http.Response('', HttpStatus.requestTimeout,
+            reasonPhrase: 'Request timeout');
+      });
+      debugPrint(
+          'Upload signal response code: ${response.statusCode.toString()}');
 
-    if (response.statusCode != 200) {
-      _status = UploadStatus.error;
-      _onTimeout?.call();
-    } else {
-      _status = UploadStatus.completed;
+      if (response.statusCode != 200) {
+        _status = UploadStatus.error;
+        _onTimeout?.call();
+      } else {
+        // debugPrint(response.statusCode)exl";
+        _status = UploadStatus.completed;
+
+      }
+    }
+
+    if(_status == UploadStatus.completed) {
       _onComplete?.call({});
     }
+    // debugPrint(
+    //     'Upload signal response code: ${response.statusCode.toString()}');
+    //
+    // if (response.statusCode != 200) {
+    //   _status = UploadStatus.error;
+    //   _onTimeout?.call();
+    // } else {
+    //   _status = UploadStatus.completed;
+    //   _onComplete?.call({});
+    // }
   }
 
   UploadStatus status() => _status;
@@ -130,26 +159,35 @@ class UploadClient {
       var response = await http.post(blobConfig!.getUri('cwt'));
 
       if (response.statusCode == 200) {
-        //debugPrint(response.body);
-        List<dynamic> jsonArray = List.from(jsonDecode(response.body));
-        var cwtString = jsonArray[0]['value'].toString();
-        debugPrint('Getting segment $segmentId try ${10 - repeat + 1}:');
-        if (cwtString == 'error') {
-          debugPrint('Not received cwt $segmentId');
-          cwt = [];
-        } else {
-          debugPrint('Length of cwtString ${cwtString.length}');
-          //debugPrint(cwtString);
-          var cwtBytes = base64Decode(cwtString);
-          debugPrint('Length of cwtBytes ${cwtBytes.length}');
-          ByteData byteData = cwtBytes.buffer.asByteData();
-          cwt = [
-            for (var offset = 0; offset < cwtBytes.length; offset += 4)
-              byteData.getFloat32(offset, Endian.little),
-          ];
-          debugPrint(
-              'Length of decoded cwt: ${cwt.length}, example: ${cwt[0]}');
+        debugPrint(response.body);
+        // List<dynamic> jsonArray = List.from(jsonDecode(response.body));
+        // var cwtString = jsonArray[0]['value'].toString();
+        var jsonObject = jsonDecode(response.body);
+        var jsonArray = jsonObject['raw_data'];
+        if (jsonArray.length > 16384) {
+          jsonArray = jsonArray.sublist(0, 16384);
         }
+        cwt = (jsonArray as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList();
+
+        debugPrint('Getting segment $segmentId try ${10 - repeat + 1}:');
+        // if (cwtString == 'error') {
+        //   debugPrint('Not received cwt $segmentId');
+        //   cwt = [];
+        // } else {
+        //   debugPrint('Length of cwtString ${cwtString.length}');
+        //   //debugPrint(cwtString);
+        //   var cwtBytes = base64Decode(cwtString);
+        //   debugPrint('Length of cwtBytes ${cwtBytes.length}');
+        //   ByteData byteData = cwtBytes.buffer.asByteData();
+        //   cwt = [
+        //     for (var offset = 0; offset < cwtBytes.length; offset += 4)
+        //       byteData.getFloat32(offset, Endian.little),
+        //   ];
+        //   debugPrint(
+        //       'Length of decoded cwt: ${cwt.length}, example: ${cwt[0]}');
+        // }
         break;
       }
       repeat--;
@@ -161,6 +199,7 @@ class UploadClient {
       }
       await Future.delayed(const Duration(milliseconds: 150));
     }
+    debugPrint('Length of decoded cwt: ${cwt.length}, example: ${cwt[0]}');
     _status = UploadStatus.completed;
     _onComplete?.call({segmentId: cwt});
   }

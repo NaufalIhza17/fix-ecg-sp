@@ -157,7 +157,7 @@ class AccountInfoForm extends StatelessWidget {
               ),
               style: inputTextTextStyle,
               initialValue:
-                  'user@gmail.com', // TODO: harusnya ambil dari database
+                  'admin@gmail.com', // TODO: harusnya ambil dari database
             ),
           ],
         ),
@@ -190,43 +190,43 @@ class AccountInfoForm extends StatelessWidget {
               ),
               style: inputTextTextStyle,
               initialValue:
-              '+886 9XXXXXXXX', // TODO: harusnya ambil dari database
+              '0980000000', // TODO: harusnya ambil dari database
             ),
           ],
         ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Name',
-                  style: inputLabelTextStyle,
-                ),
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 20.0,
-                    semanticLabel: 'Change name',
-                  ),
-                  padding: EdgeInsets.zero,
-                ),
-              ],
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color(0x336C6C6C),
-                border: OutlineInputBorder(),
-              ),
-              style: inputTextTextStyle,
-              initialValue:
-              'Steve', // TODO: harusnya ambil dari database
-            ),
-          ],
-        ),
+        // Column(
+        //   children: [
+        //     Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         Text(
+        //           'Name',
+        //           style: inputLabelTextStyle,
+        //         ),
+        //         const IconButton(
+        //           onPressed: null,
+        //           icon: Icon(
+        //             Icons.edit,
+        //             color: Colors.white,
+        //             size: 20.0,
+        //             semanticLabel: 'Change name',
+        //           ),
+        //           padding: EdgeInsets.zero,
+        //         ),
+        //       ],
+        //     ),
+        //     TextFormField(
+        //       decoration: const InputDecoration(
+        //         filled: true,
+        //         fillColor: Color(0x336C6C6C),
+        //         border: OutlineInputBorder(),
+        //       ),
+        //       style: inputTextTextStyle,
+        //       initialValue:
+        //       'Steve', // TODO: harusnya ambil dari database
+        //     ),
+        //   ],
+        // ),
         Column(
           children: [
             Row(
@@ -256,7 +256,7 @@ class AccountInfoForm extends StatelessWidget {
               ),
               style: inputTextTextStyle,
               initialValue:
-              'password', // TODO: harusnya ambil dari database
+              '12345678',
               obscureText: true,
               obscuringCharacter: '*',
             ),
